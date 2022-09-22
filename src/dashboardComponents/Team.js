@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FaTrash, FaEdit } from 'react-icons/fa'
 import { teamData } from '../dummyData/Data';
-import axios from 'axios';
+import axiosRequest from '../api/index';
 import { ToastContainer } from "react-toastify";
 import Notify from "../functions/Notify";
 import { getUser } from '../Utils/Common';
@@ -40,8 +40,8 @@ const Leaders = () => {
   };
 
   const GetTeam = () => {
-    const url = 'http://localhost:5000/api/v1/team'
-    axios.get(url)
+    const url = 'team'
+    axiosRequest.get(url)
       .then(response => {
         const result = response.data;
         const { status, message, data } = result;
@@ -61,7 +61,6 @@ const Leaders = () => {
         }
       })
   }
-
 
   const handleProductImageUpload = (e) => {
     const file = e.target.files[0];
@@ -83,10 +82,10 @@ const Leaders = () => {
 
   const handleSubmite = (e) => {
     e.preventDefault()
-    const url = 'http://localhost:5000/api/v1/team/create'
+    const url = 'team/create'
     const Credentials = { names, email, title, isAdmin, telephone }
     setLoading(true)
-    axios.post(url, Credentials)
+    axiosRequest.post(url, Credentials)
       .then(response => {
         setLoading(false)
         const result = response.data;
@@ -113,14 +112,15 @@ const Leaders = () => {
 
   const handleUpdate = (e) => {
     e.preventDefault()
-    const url = `http://localhost:5000/api/v1/team/${id}`
+    const url = `team/${id}`
     const Credentials = { names, email, title, isAdmin, telephone, image }
     setLoading(true)
-    axios.put(url, Credentials)
+    axiosRequest.put(url, Credentials)
       .then(response => {
         setLoading(false)
         const result = response.data;
         Notify(result.message, "success");
+        console.log("message",result.message)
         const { status, message } = result;
         if (status !== 'SUCCESS') {
           GetTeam();
@@ -143,8 +143,8 @@ const Leaders = () => {
 
   const handleDelete = (e) => {
     e.preventDefault()
-    const url = `http://localhost:5000/api/v1/team/${id}`
-    axios.delete(url)
+    const url = `team/${id}`
+    axiosRequest.delete(url)
       .then(response => {
         const result = response.data;
         Notify(result.message, "success");

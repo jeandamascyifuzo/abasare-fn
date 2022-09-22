@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import Divider from '../assets/image/divider.png'
-import axios from '../api/index'
+import { axiosRequest } from '../api/index'
 import { ToastContainer } from "react-toastify";
 import Notify from "../functions/Notify";
-const Service_URL = "/service"
+const Service_URL = "service"
 
 const Service = () => {
 
     const [Data, setData] = useState([]);
 
     const GetServices = () => {
-        axios.get(Service_URL)
+        axiosRequest.get(Service_URL)
             .then(response => {
                 const result = response.data;
                 const { status, message, data } = result;

@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import Divider from '../assets/image/divider.png'
 import { ToastContainer } from "react-toastify";
 import Notify from "../functions/Notify";
-import axios from '../api/index'
-const Contact_URL = "/message/send"
+import { axiosRequest } from '../api/index'
+const Contact_URL = "message/send"
 
 const Contact = () => {
     const [names, setNames] = useState("")
@@ -13,7 +13,7 @@ const Contact = () => {
     const handleSubmite = (e) => {
         e.preventDefault()
         const Credentials = { names, email, message }
-        axios.post(Contact_URL, Credentials)
+        axiosRequest.post(Contact_URL, Credentials)
             .then(response => {
                 const result = response.data;
                 Notify(result.message, "success");

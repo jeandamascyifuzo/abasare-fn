@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import Zoom from 'react-reveal/Zoom';
-import axios from '../api/index'
+import axios, { axiosRequest } from '../api/index'
 import { ToastContainer } from "react-toastify";
 import Notify from "../functions/Notify";
-const Portfolio_URL = "/portifolio"
+const Portfolio_URL = "portifolio"
 
 const Portfolio = () => {
     const [Data, setData] = useState([]);
 
     const GetPortifolio = () => {
-        axios.get(Portfolio_URL)
+        axiosRequest.get(Portfolio_URL)
             .then(response => {
                 const result = response.data;
                 const { status, message, data } = result;
@@ -21,7 +21,7 @@ const Portfolio = () => {
                 }
             })
             .catch(error => {
-                    Notify(error.message, "error");
+                Notify(error.message, "error");
             })
     }
 

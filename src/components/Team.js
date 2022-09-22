@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import Divider from '../assets/image/divider.png'
-import axios from '../api/index'
+import { axiosRequest } from '../api/index'
 import { ToastContainer } from "react-toastify";
 import Notify from "../functions/Notify";
-const Team_URL = "/team"
+const Team_URL = "team"
 
 const Team = () => {
     const [Data, setData] = useState([]);
 
     const GetTeamMembers = () => {
-        axios.get(Team_URL)
+        axiosRequest.get(Team_URL)
             .then(response => {
                 const result = response.data;
                 const { status, message, data } = result;

@@ -4,7 +4,7 @@ import { portfolioData } from '../dummyData/Data';
 import { useDropzone } from "react-dropzone";
 import { ToastContainer } from "react-toastify";
 import { getUser } from '../Utils/Common';
-import axios from 'axios';
+import axiosRequest from '../api/index';
 import Notify from "../functions/Notify";
 
 
@@ -22,7 +22,7 @@ const Portfolio = () => {
   const [title, setTitle] = useState("")
   const [desc, setDesc] = useState("")
   const [image, setImage] = useState("")
-  
+
   const removeModel = () => {
     let newState = !createPortfolioModel;
     setCreatePortfolioModel(newState);
@@ -38,8 +38,8 @@ const Portfolio = () => {
   };
 
   const GetPortifolio = () => {
-    const url = 'http://localhost:5000/api/v1/portifolio'
-    axios.get(url)
+    const url = 'portifolio'
+    axiosRequest.get(url)
       .then(response => {
         const result = response.data;
         const { status, message, data } = result;
@@ -81,10 +81,10 @@ const Portfolio = () => {
 
   const handleSubmite = (e) => {
     e.preventDefault()
-    const url = 'http://localhost:5000/api/v1/portifolio/create'
+    const url = 'portifolio/create'
     const Credentials = { title, desc, image }
     setLoading(true)
-    axios.post(url, Credentials)
+    axiosRequest.post(url, Credentials)
       .then(response => {
         setLoading(false)
         const result = response.data;
@@ -112,10 +112,10 @@ const Portfolio = () => {
 
   const handleUpdate = (e) => {
     e.preventDefault()
-    const url = `http://localhost:5000/api/v1/portifolio/${id}`
+    const url = `portifolio/${id}`
     const Credentials = { title, desc, image }
     setLoading(true)
-    axios.put(url, Credentials)
+    axiosRequest.put(url, Credentials)
       .then(response => {
         setLoading(false)
         const result = response.data;
@@ -142,8 +142,8 @@ const Portfolio = () => {
 
   const handleDelete = (e) => {
     e.preventDefault()
-    const url = `http://localhost:5000/api/v1/portifolio/${id}`
-    axios.delete(url)
+    const url = `portifolio/${id}`
+    axiosRequest.delete(url)
       .then(response => {
         const result = response.data;
         Notify(result.message, "success");

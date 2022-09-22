@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { FaTrash } from 'react-icons/fa'
-import axios from '../api/index';
+import { axiosRequest } from '../api/index';
 import { ToastContainer } from "react-toastify";
 import Notify from "../functions/Notify";
 import { GiBookmarklet } from 'react-icons/gi'
 import { getUser } from '../Utils/Common';
-const Message_URL = "/message"
+const Message_URL = "message"
 
 const Messages = () => {
   const [deleMessageModel, setDeleMESSAGEModel] = useState(false);
@@ -28,7 +28,7 @@ const Messages = () => {
 
   //here we will get all Message
   const GetMessage = () => {
-    axios.get(Message_URL)
+    axiosRequest.get(Message_URL)
       .then(response => {
         const result = response.data;
         const { status, message, data } = result;
@@ -52,8 +52,8 @@ const Messages = () => {
   //handle Delete Function 
   const handleDelete = (e) => {
     e.preventDefault()
-    const url = `http://localhost:5000/api/v1/message/${id}`
-    axios.delete(url)
+    const url = `message/${id}`
+    axiosRequest.delete(url)
       .then(response => {
         const result = response.data;
         Notify(result.message, "success");

@@ -1,11 +1,11 @@
 import React, { useEffect, useState, CSSProperties } from 'react'
 import { FaTrash, FaEdit } from 'react-icons/fa'
-import { serviceData } from '../dummyData/Data';
+// import { serviceData } from '../dummyData/Data';
 import { ToastContainer } from "react-toastify";
 import { getUser } from '../Utils/Common';
-import { useDropzone } from "react-dropzone";
-import ClipLoader from "react-spinners/ClipLoader";
-import axios from 'axios';
+// import { useDropzone } from "react-dropzone";
+// import ClipLoader from "react-spinners/ClipLoader";
+import axiosRequest from '../api/index';
 import Notify from "../functions/Notify";
 
 
@@ -20,8 +20,6 @@ const Service = () => {
   const [id, setId] = useState("");
   const user = getUser()
 
-
-  //Define here local state that store the form Data
   const [title, setTitle] = useState("")
   const [desc, setDesc] = useState("")
   const [icon, setIcon] = useState("")
@@ -42,8 +40,8 @@ const Service = () => {
   };
 
   const GetService = () => {
-    const url = 'http://localhost:5000/api/v1/service'
-    axios.get(url)
+    const url = 'service'
+    axiosRequest.get(url)
       .then(response => {
         const result = response.data;
         const { status, message, data } = result;
@@ -64,8 +62,6 @@ const Service = () => {
       })
   }
 
-
-
   const handleProductImageUpload = (e) => {
     const file = e.target.files[0];
 
@@ -84,13 +80,12 @@ const Service = () => {
     }
   };
 
-
   const handleSubmite = (e) => {
     e.preventDefault()
-    const url = 'http://localhost:5000/api/v1/service/create'
+    const url = 'service/create'
     const Credentials = { title, desc, icon }
     setLoading(true)
-    axios.post(url, Credentials)
+    axiosRequest.post(url, Credentials)
       .then(response => {
         setLoading(false)
         const result = response.data;
@@ -117,10 +112,10 @@ const Service = () => {
 
   const handleUpdate = (e) => {
     e.preventDefault()
-    const url = `http://localhost:5000/api/v1/service/${id}`
+    const url = `service/${id}`
     const Credentials = { title, desc, icon }
     setLoading(true)
-    axios.put(url, Credentials)
+    axiosRequest.put(url, Credentials)
       .then(response => {
         setLoading(false)
         const result = response.data;
@@ -145,11 +140,10 @@ const Service = () => {
       })
   }
 
-
   const handleDelete = (e) => {
     e.preventDefault()
-    const url = `http://localhost:5000/api/v1/service/${id}`
-    axios.delete(url)
+    const url = `service/${id}`
+    axiosRequest.delete(url)
       .then(response => {
         const result = response.data;
         Notify(result.message, "success");
@@ -234,16 +228,16 @@ const Service = () => {
                     name="icon"
                     className=" border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="Icon"
-                    
+
                   />
                 </div>
               </div>
               <div className="w-full flex justify-between">
                 <button className='py-2 w-[40%] md:w-1/3 bg-transparent rounded border border-gray-800 font-sans text-sm text-gray-900' onClick={(e) => removeModel(e.preventDefault())}>Cancel</button>
                 <button className='py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white focus:ring-4 focus:outline-none'
-                 onClick={handleSubmite}>
-                   {loading ? "loading..." : "Save"}
-                   </button>
+                  onClick={handleSubmite}>
+                  {loading ? "loading..." : "Save"}
+                </button>
               </div>
             </form>
           </div>

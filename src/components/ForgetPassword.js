@@ -52,7 +52,7 @@ const ForgetPassword = () => {
                                 <div className="text-center">
                                     <Link to="/login"
                                         className="inline-block text-sm text-gray-900 align-baseline hover:text-gray-600"
-                                       
+
                                     >
                                         Already have an account? Login!
                                     </Link>
