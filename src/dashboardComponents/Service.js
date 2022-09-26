@@ -18,7 +18,12 @@ const Service = () => {
   const [RowData, SetRowData] = useState([])
   const [Data, setData] = useState([]);
   const [id, setId] = useState("");
-  const user = getUser()
+  const user = getUser();
+  const [formData, setFormData] = useState({
+    title: "",
+    desc: "",
+    icon: ""
+  })
 
   const [title, setTitle] = useState("")
   const [desc, setDesc] = useState("")
@@ -41,8 +46,10 @@ const Service = () => {
 
   const GetService = () => {
     const url = 'service'
+    setLoading(false)
     axiosRequest.get(url)
       .then(response => {
+        setLoading(true)
         const result = response.data;
         const { status, message, data } = result;
         if (status !== 'SUCCESS') {
@@ -113,15 +120,19 @@ const Service = () => {
   const handleUpdate = (e) => {
     e.preventDefault()
     const url = `service/${id}`
-    const Credentials = { title, desc, icon }
     setLoading(true)
-    axiosRequest.put(url, Credentials)
+    axiosRequest.patch(url, formData)
       .then(response => {
         setLoading(false)
         const result = response.data;
-        Notify(result.message, "success");
+        if (!result) {
+          Notify("something went wrong", "error");
+        } else {
+          Notify(result.message, "success");
+        }
         const { status, message } = result;
         if (status !== 'SUCCESS') {
+          setFormData("");
           GetService();
           setUpdaServiceModel(false)
         }
@@ -236,7 +247,7 @@ const Service = () => {
                 <button className='py-2 w-[40%] md:w-1/3 bg-transparent rounded border border-gray-800 font-sans text-sm text-gray-900' onClick={(e) => removeModel(e.preventDefault())}>Cancel</button>
                 <button className='py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white focus:ring-4 focus:outline-none'
                   onClick={handleSubmite}>
-                  {loading ? "loading..." : "Save"}
+                  Save
                 </button>
               </div>
             </form>
@@ -277,7 +288,7 @@ const Service = () => {
         <div className="bg-white sm:w-3/4 md:w-1/2  xl:w-4/12 rounded-lg p-4 pb-8">
           <div className="card-title w-full flex  flex-wrap justify-center items-center  ">
             <h3 className="font-bold text-sm text-gray-700 text-center w-11/12">
-              Update <span className='italic text-black'>Web Design</span>
+              Update <span className='italic text-black'>{RowData._id}</span>
             </h3>
             <hr className=" bg-primary border-b my-3 w-full" />
           </div>
@@ -288,8 +299,11 @@ const Service = () => {
                   <input
                     type="text"
                     name="title"
-                    defaultValue={RowData.title}
-                    onChange={(e) => setTitle(e.target.value)}
+                    defaultValue={formData.title}
+                    onChange={(e) => setFormData({
+                      ...formData,
+                      title: e.target.value
+                    })}
                     className="border rounded outline-none  px-2 font-sans text-xs py-2 w-full"
                   />
                 </div>
@@ -299,8 +313,11 @@ const Service = () => {
                   <input
                     type="text"
                     name="desc"
-                    defaultValue={RowData.desc}
-                    onChange={(e) => setDesc(e.target.value)}
+                    defaultValue={formData.desc}
+                    onChange={(e) => setFormData({
+                      ...formData,
+                      desc: e.target.value
+                    })}
                     className=" border py-2 rounded  outline-none px-2 font-sans text-xs w-full"
                   />
                 </div>
@@ -312,7 +329,7 @@ const Service = () => {
                     id="imgUpload"
                     accept="image/*"
                     type="file"
-                    defaultValue={RowData.icon}
+                    defaultValue={formData.icon}
                     onChange={handleProductImageUpload}
                     className="border py-2 rounded outline-none px-2 font-sans text-xs w-full"
                   />
@@ -325,7 +342,7 @@ const Service = () => {
                     setUpdaServiceModel(false)
                   }}>Cancel
                 </button>
-                <button className='py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white' onClick={handleUpdate}>{loading ? "loading..." : "Update"}</button>
+                <button className='py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white' onClick={handleUpdate}>Update</button>
               </div>
             </form>
           </div>
@@ -375,7 +392,7 @@ const Service = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {Data.map((item, index) => {
+                      {loading ? Data.map((item, index) => {
                         let rowTheme =
                           index % 2 !== 0
                             ? 'bg-gray-300'
@@ -386,7 +403,7 @@ const Service = () => {
                               <img className="w-10 h-10 rounded-full shadow-lg" src={item.icon} alt="Bonnie" />
                             </td>
                             <td className="p-3 border-b border-gray-200 text-sm">
-                              <div className="flex items-center">
+                              <div className="flex items-center w-[30%]">
                                 <div>
                                   <p className="text-gray-900 whitespace-no-wrap">
                                     {item.title}
@@ -394,13 +411,13 @@ const Service = () => {
                                 </div>
                               </div>
                             </td>
-                            <td className="px-2 md:px-5 py-3 border-b border-gray-200 text-xs md:text-sm">
-                              <p className="text-gray-900 whitespace-no-wrap ">{item.desc}</p>
+                            <td className="px-2 md:px-5 py-3 border-b border-gray-200 text-xs md:text-sm w-[50%]">
+                              <p className="text-gray-900 whitespace-no-wrap line-clamp-3">{item.desc}</p>
                             </td>
                             {user[0]?.isAdmin ? (
                               <td className="px-5 py-3 border-b border-gray-200 text-gray-500 cursor-pointer text-lg">
                                 <div className='flex'>
-                                  <div className="cursor-pointer mr-2 text-gray-500" onClick={() => { updateMemberModel(SetRowData(item), setId(item._id)) }}>
+                                  <div className="cursor-pointer mr-2 text-gray-500" onClick={() => { updateMemberModel(setFormData(item), setId(item._id)) }}>
                                     <FaEdit />
                                   </div>
                                   <div className="cursor-pointer text-[#FF3D3D]" onClick={() => { removeDeleteModel(SetRowData(item), setId(item._id), setDelete(true)) }}>
@@ -411,7 +428,10 @@ const Service = () => {
                             ) : ""}
                           </tr>
                         );
-                      })}
+                      }) : (<div className="mx-44 w-12 h-12 rounded-full animate-spin
+                      border-2 border-solid border-black border-t-transparent">
+                      </div>)
+                      }
                     </tbody>
                   </table>
                 </div>

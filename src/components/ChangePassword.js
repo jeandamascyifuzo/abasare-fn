@@ -22,7 +22,7 @@ const ChangePassword = () => {
   const tooglePassword = () => {
     setPasswordShown(!passwordShown);
   };
-  console.log(password)
+  // const userId = (window.location.href.split('/')[6])
 
   useEffect(()=> {
     const response = axiosRequest.get(`team/${id}`)
@@ -32,7 +32,7 @@ const ChangePassword = () => {
   const handleUpdate = async(e) => {
     e.preventDefault()
     try{
-      const response = await axiosRequest.put(`team/6320c055ff4afe02e6160c21`, {
+      const response = await axiosRequest.put(`team/${window.location.href.split('/')[6]}`, {
         password
       })
       setPassword(response.data)

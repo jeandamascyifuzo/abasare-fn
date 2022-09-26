@@ -15,7 +15,15 @@ const Leaders = () => {
   const [RowData, SetRowData] = useState([])
   const [Data, setData] = useState([]);
   const [id, setId] = useState("");
-  const user = getUser()
+  const user = getUser();
+  const [formData, setFormData] = useState({
+    title: "",
+    names: "",
+    email: "",
+    isAdmin: "",
+    telephone: "",
+    image: ""
+  })
 
   const [names, setNames] = useState("")
   const [email, setEmail] = useState("")
@@ -41,8 +49,10 @@ const Leaders = () => {
 
   const GetTeam = () => {
     const url = 'team'
+    setLoading(false)
     axiosRequest.get(url)
       .then(response => {
+        setLoading(true)
         const result = response.data;
         const { status, message, data } = result;
         if (status !== 'SUCCESS') {
@@ -113,31 +123,26 @@ const Leaders = () => {
   const handleUpdate = (e) => {
     e.preventDefault()
     const url = `team/${id}`
-    const Credentials = { names, email, title, isAdmin, telephone, image }
     setLoading(true)
-    axiosRequest.put(url, Credentials)
+    axiosRequest.put(url, formData)
       .then(response => {
         setLoading(false)
         const result = response.data;
         Notify(result.message, "success");
-        console.log("message",result.message)
         const { status, message } = result;
         if (status !== 'SUCCESS') {
+          setFormData("");
           GetTeam();
           setUpdateTeamModel(false)
         }
         else {
+          setFormData("");
           console.log(message)
         }
       })
       .catch(error => {
         setLoading(false)
-        if (error.code !== "ERR_NETWORK") {
-          Notify(error.response.data.message, "error");
-        }
-        else {
-          Notify(error.message, "error");
-        }
+       console.log("error", error)
       })
   }
 
@@ -264,7 +269,7 @@ const Leaders = () => {
               </div>
               <div className="w-full flex justify-between">
                 <button className='py-2 w-[40%] md:w-1/3 bg-transparent rounded border border-gray-800 font-sans text-sm text-gray-900' onClick={(e) => removeModel(e.preventDefault())}>Cancel</button>
-                <button className='py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white focus:ring-4 focus:outline-none' onClick={handleSubmite}>{loading ? "loading..." : "Save"}</button>
+                <button className='py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white focus:ring-4 focus:outline-none' onClick={handleSubmite}>Save</button>
               </div>
             </form>
           </div>
@@ -315,8 +320,11 @@ const Leaders = () => {
                   <input
                     type="text"
                     name="name"
-                    defaultValue={RowData.names}
-                    onChange={(e) => setNames(e.target.value)}
+                    defaultValue={formData.names}
+                    onChange={(e) => setFormData({
+                      ...formData,
+                      names: e.target.value
+                    })}
                     className="border rounded outline-none  px-2 font-sans text-xs py-2 w-full"
                   />
                 </div>
@@ -326,9 +334,13 @@ const Leaders = () => {
                   <input
                     type="text"
                     name="email"
-                    defaultValue={RowData.email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className=" border py-2 rounded  outline-none px-2 font-sans text-xs w-full"
+                    defaultValue={formData.email}
+                    onChange={(e) => setFormData({
+                      ...formData,
+                      email: e.target.value
+                    })}
+                    className=" border py-2 rounded cursor-not-allowed outline-none px-2 font-sans text-xs w-full"
+                    disabled readonly
                   />
                 </div>
               </div>
@@ -336,8 +348,11 @@ const Leaders = () => {
                 <div className="grouped-input flex items-center h-full w-full rounded-md">
                   <input
                     type="number"
-                    defaultValue={RowData.telephone}
-                    onChange={(e) => setTelephone(e.target.value)}
+                    defaultValue={formData.telephone}
+                    onChange={(e) => setFormData({
+                      ...formData,
+                      telephone: e.target.value
+                    })}
                     name="telephone"
                     className="border py-2 rounded outline-none px-2 font-sans text-xs w-full"
                   />
@@ -348,8 +363,11 @@ const Leaders = () => {
                   <input
                     type="text"
                     name="title"
-                    defaultValue={RowData.title}
-                    onChange={(e) => setTitle(e.target.value)}
+                    defaultValue={formData.title}
+                    onChange={(e) => setFormData({
+                      ...formData,
+                      title: e.target.value
+                    })}
                     className="border py-2 rounded outline-none  px-2 font-sans text-xs w-full"
                   />
                 </div>
@@ -359,8 +377,11 @@ const Leaders = () => {
                   <input
                     type="text"
                     name="title"
-                    defaultValue={RowData.isAdmin}
-                    onChange={(e) => setIsAdmin(e.target.value)}
+                    defaultValue={formData.isAdmin}
+                    onChange={(e) => setFormData({
+                      ...formData,
+                      isAdmin: e.target.value
+                    })}
                     className="border py-2 rounded outline-none  px-2 font-sans text-xs w-full"
                   />
                 </div>
@@ -368,11 +389,12 @@ const Leaders = () => {
               <div className="input my-3 h-9 ">
                 <div className="grouped-input flex items-center h-full w-full rounded-md">
                   <input
-                    id="imgUpload"
-                    accept="image/*"
-                    type="file"
-                    defaultValue={RowData.image}
-                    onChange={handleProductImageUpload}
+                      name="image"
+                      id="imgUpload"
+                      accept="image/*"
+                      type="file"
+                      defaultValue={formData.image}
+                      onChange={handleProductImageUpload}
                     className="border py-2 rounded outline-none px-2 font-sans text-xs w-full"
                   />
                 </div>
@@ -384,7 +406,7 @@ const Leaders = () => {
                     setUpdateTeamModel(false)
                   }}>Cancel
                 </button>
-                <button className='py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white focus:ring-4 focus:outline-none' onClick={handleUpdate}> {loading ? "loading..." : "Update"}</button>
+                <button className='py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white focus:ring-4 focus:outline-none' onClick={handleUpdate}>Update</button>
               </div>
             </form>
           </div>
@@ -442,7 +464,7 @@ const Leaders = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {Data.map((item, index) => {
+                      {loading ? Data.map((item, index) => {
                         let rowTheme =
                           index % 2 !== 0
                             ? 'bg-gray-300'
@@ -481,7 +503,7 @@ const Leaders = () => {
                             {user[0]?.isAdmin ? (
                               <td className="px-5 py-3 border-b border-gray-200 text-gray-500 cursor-pointer text-lg">
                                 <div className='flex'>
-                                  <div className="cursor-pointer mr-2 text-gray-500" onClick={() => updateMemberModel(SetRowData(item), setId(item._id))}>
+                                  <div className="cursor-pointer mr-2 text-gray-500" onClick={() => updateMemberModel(setFormData(item), setId(item._id))}>
                                     <FaEdit />
                                   </div>
                                   <div className="cursor-pointer text-[#FF3D3D]" onClick={() => removeDeleteModel(SetRowData(item), setId(item._id), setDelete(true))}>
@@ -492,7 +514,10 @@ const Leaders = () => {
                             ) : ""}
                           </tr>
                         );
-                      })}
+                      }) : (<div className="mx-44 w-12 h-12 rounded-full animate-spin
+                      border-2 border-solid border-black border-t-transparent">
+                      </div>)
+                      }
                     </tbody>
                   </table>
                 </div>

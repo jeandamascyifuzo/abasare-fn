@@ -2,7 +2,8 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Home from '../components/Home';
 import Login from '../components/Login';
-import ResetPassword from '../components/ForgetPassword';
+import ForgetPassword from '../components/ForgetPassword';
+import ResetPassword from '../components/ResetPassword';
 
 function MainRoutes() {
   return (
@@ -10,7 +11,8 @@ function MainRoutes() {
       <Routes>
         <Route path="/" exact element={<Home />} />
         <Route path="/login" exact element={<Login />} />
-        <Route path="/reset" exact element={<ResetPassword />} />
+        <Route path="/forget" exact element={<ForgetPassword />} />
+        <Route path="/reset/password/:id/:token" exact element={<ResetPassword />} />
       </Routes>
     </div>
   );

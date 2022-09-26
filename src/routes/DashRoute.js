@@ -19,7 +19,7 @@ const DashRoute = () => {
           <Route path="/portfolio" element={(<Portfolio />)} />
           <Route path="/service" element={<Service />} />
           <Route path="/message" element={<Messages />} />
-          <Route path="/change/password" element={<ResetPassword />} />
+          <Route path="/change/password/:userId" element={<ResetPassword />} />
         </Routes>
       </div>
     </>

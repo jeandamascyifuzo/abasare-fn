@@ -7,7 +7,6 @@ import { getUser } from '../Utils/Common';
 import axiosRequest from '../api/index';
 import Notify from "../functions/Notify";
 
-
 const Portfolio = () => {
   const [createPortfolioModel, setCreatePortfolioModel] = useState(false);
   const [deletePortfolioModel, setDeletePortfolioModel] = useState(false);
@@ -17,7 +16,12 @@ const Portfolio = () => {
   const [RowData, SetRowData] = useState([])
   const [Data, setData] = useState([]);
   const [id, setId] = useState("");
-  const user = getUser()
+  const user = getUser();
+  const [formData, setFormData] = useState({
+    title: "",
+    desc: "",
+    image: ""
+  })
 
   const [title, setTitle] = useState("")
   const [desc, setDesc] = useState("")
@@ -39,8 +43,10 @@ const Portfolio = () => {
 
   const GetPortifolio = () => {
     const url = 'portifolio'
+    setLoading(false)
     axiosRequest.get(url)
       .then(response => {
+        setLoading(true)
         const result = response.data;
         const { status, message, data } = result;
         if (status !== 'SUCCESS') {
@@ -109,13 +115,11 @@ const Portfolio = () => {
       })
   }
 
-
   const handleUpdate = (e) => {
     e.preventDefault()
     const url = `portifolio/${id}`
-    const Credentials = { title, desc, image }
     setLoading(true)
-    axiosRequest.put(url, Credentials)
+    axiosRequest.patch(url, formData)
       .then(response => {
         setLoading(false)
         const result = response.data;
@@ -233,7 +237,7 @@ const Portfolio = () => {
               </div>
               <div className="w-full flex justify-between">
                 <button className='py-2 w-[40%] md:w-1/3 bg-transparent rounded border border-gray-800 font-sans text-sm text-gray-900' onClick={(e) => removeModel(e.preventDefault())}>Cancel</button>
-                <button className='py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white focus:ring-4 focus:outline-none' onClick={handleSubmite}>{loading ? "loading..." : "Save"}</button>
+                <button className='py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white focus:ring-4 focus:outline-none' onClick={handleSubmite}>Save</button>
               </div>
             </form>
           </div>
@@ -281,8 +285,11 @@ const Portfolio = () => {
                   <input
                     type="text"
                     name="title"
-                    defaultValue={RowData.title}
-                    onChange={(e) => setTitle(e.target.value)}
+                    defaultValue={formData.title}
+                    onChange={(e) => setFormData({
+                      ...formData,
+                      title: e.target.value
+                    })}
                     className="border border-gray-300 rounded outline-none px-2 pb-10 font-sans text-xs py-2 w-full"
                     placeholder="Title"
                   />
@@ -293,8 +300,11 @@ const Portfolio = () => {
                   <textarea
                     type="text"
                     name="desc"
-                    defaultValue={RowData.desc}
-                    onChange={(e) => setDesc(e.target.value)}
+                    defaultValue={formData.desc}
+                    onChange={(e) => setFormData({
+                      ...formData,
+                      desc: e.target.value
+                    })}
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="Description"
                   />
@@ -305,7 +315,7 @@ const Portfolio = () => {
                   <input
                     type="file"
                     name="image"
-                    defaultValue={RowData.image}
+                    defaultValue={formData.image}
                     onChange={handleProductImageUpload}
                     className="border py-2 rounded outline-none px-2 font-sans text-xs w-full"
                   />
@@ -318,7 +328,7 @@ const Portfolio = () => {
                     setUpdatePortfolioModel(false)
                   }}>Cancel
                 </button>
-                <button className='py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white focus:ring-4 focus:outline-none' onClick={handleUpdate}>{loading ? "loading..." : "Update"}</button>
+                <button className='py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white focus:ring-4 focus:outline-none' onClick={handleUpdate}>Update</button>
               </div>
             </form>
           </div>
@@ -343,27 +353,31 @@ const Portfolio = () => {
             </div>
             <div>
               <div className="flex flex-wrap ml-0 xl:ml-10 overflow-x-auto">
-                {Data.map((item) => (
+                {loading ?
+                  Data.map((item) => (
 
-                  <div className="w-full sm:w-[40%] md:w-[30%] xl:w-2/5 bg-white rounded-lg border border-gray-200 md:mx-2 xl:mr-14 mx-2 mb-4 shadow-md" key={item._id}>
+                    <div className="w-full sm:w-[40%] md:w-[30%] xl:w-2/5 bg-white rounded-lg border border-gray-200 md:mx-2 xl:mr-14 mx-2 mb-4 shadow-md" key={item._id}>
 
-                    <div className="flex flex-col items-left pb-6">
+                      <div className="flex flex-col items-left pb-6">
 
-                      <img className="mb-3 rounded-lg shadow-lg h-[200px]  sm:h-[150px] xl:h-[300px]" src={item.image} alt="Bonniimage" />
-                      <h6 className="py-2 text-xl font-medium font-serif px-3">{item.title}</h6>
-                      <span className="text-sm text-gray-800 text-left px-3">{item.desc}</span>
+                        <img className="mb-3 rounded-lg shadow-lg h-[200px]  sm:h-[150px] xl:h-[300px]" src={item.image} alt="Bonniimage" />
+                        <h6 className="py-2 text-xl font-medium font-serif px-3">{item.title}</h6>
+                        <span className="text-sm text-gray-800 text-left px-3">{item.desc}</span>
 
-                      <div className='px-2'>
-                        {user[0]?.isAdmin ? (
-                          <div className="flex mt-4 justify-between space-x-3 lg:mt-6">
-                            <Link to="#link" className="inline-flex items-center py-2 px-3  text-xs font-medium text-center hover:bg-transparent hover:text-black border text-black bg-gray-300 rounded-lg" onClick={() => updatePortfoliosModel(SetRowData(item), setId(item._id))}>Edit</Link>
-                            <Link to="#link" className="inline-flex items-center py-2 px-3 text-sm font-medium text-center text-black font-serif bg-red-500 hover:bg-transparent border border-red-500 hover:text-red-500 hover:bg-white rounded" onClick={() => removeDeleteModel(SetRowData(item), setId(item._id), setDelete(true))}>Delete</Link>
-                          </div>)
-                          : ""}
+                        <div className='px-2'>
+                          {user[0]?.isAdmin ? (
+                            <div className="flex mt-4 justify-between space-x-3 lg:mt-6">
+                              <Link to="#link" className="inline-flex items-center py-2 px-3  text-xs font-medium text-center hover:bg-transparent hover:text-black border text-black bg-gray-300 rounded-lg" onClick={() => updatePortfoliosModel(setFormData(item), setId(item._id))}>Edit</Link>
+                              <Link to="#link" className="inline-flex items-center py-2 px-3 text-sm font-medium text-center text-black font-serif bg-red-500 hover:bg-transparent border border-red-500 hover:text-red-500 hover:bg-white rounded" onClick={() => removeDeleteModel(SetRowData(item), setId(item._id), setDelete(true))}>Delete</Link>
+                            </div>)
+                            : ""}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  )) : (<div className="mx-44 w-12 h-12 rounded-full animate-spin
+                    border-2 border-solid border-black border-t-transparent">
+                  </div>)
+                }
               </div>
             </div>
           </div>

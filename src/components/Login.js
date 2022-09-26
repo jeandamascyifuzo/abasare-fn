@@ -4,14 +4,14 @@ import { useForm } from 'react-hook-form';
 import { FiEyeOff } from 'react-icons/fi';
 import { MdLockOutline } from 'react-icons/md';
 import { FaRegEnvelope, FaRegEye } from 'react-icons/fa';
-import axios from '../api/index'
+import { axiosRequest } from '../api/index'
 import { ToastContainer } from "react-toastify";
 import { useNavigate, NavLink } from 'react-router-dom';
 import Notify from "../functions/Notify";
 import { setUserSession } from '../Utils/Common';
 import Logo from '../assets/image/myechelon-logo.png'
 
-const Login_URL = '/team/login'
+const Login_URL = 'team/login'
 
 const Login = () => {
     const [passwordShown, setPasswordShown] = useState(false);
@@ -29,7 +29,7 @@ const Login = () => {
         e.preventDefault()
         setError(null)
         setLoading(true)
-        await axios.post(Login_URL, {
+        await axiosRequest.post(Login_URL, {
             email: email,
             password: password
         }).then(res => {
@@ -37,7 +37,6 @@ const Login = () => {
             Notify(res.message, "success");
             setUserSession(res.data.token, res.data.user)
             navigate("/dashboard")
-            console.log("logged in", res)
         })
             .catch((error) => {
                 setLoading(false)
@@ -105,7 +104,7 @@ const Login = () => {
                                     {error && <div className='text-red-500 text-left -mb-8'>{error}</div>}
                                     <div className="flex w-64 justify-between rounded mb-5 mt-5">
                                         <Link
-                                            to="/reset"
+                                            to="/forget"
                                             className="text-xs text-white "
                                         >
                                             Forgot Password?

@@ -10,6 +10,7 @@ const Message_URL = "message"
 const Messages = () => {
   const [deleMessageModel, setDeleMESSAGEModel] = useState(false);
   const [viewModel, setViewModel] = useState(false);
+  const [loading, setLoading] = useState(false)
   const [Delete, setDelete] = useState(false)
   const [RowData, SetRowData] = useState([])
   const [Data, setData] = useState([]);
@@ -28,8 +29,10 @@ const Messages = () => {
 
   //here we will get all Message
   const GetMessage = () => {
+    setLoading(false)
     axiosRequest.get(Message_URL)
       .then(response => {
+        setLoading(true)
         const result = response.data;
         const { status, message, data } = result;
         if (status !== 'SUCCESS') {
@@ -192,7 +195,7 @@ const Messages = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {Data.map((item, index) => {
+                      {loading? Data.map((item, index) => {
                         let rowTheme =
                           index % 2 !== 0
                             ? 'bg-gray-300'
@@ -244,7 +247,10 @@ const Messages = () => {
                             </td>
                           </tr>
                         );
-                      })}
+                      }):(<div className="mx-44 w-12 h-12 rounded-full animate-spin
+                      border-2 border-solid border-black border-t-transparent">
+                  </div>)
+                      }
                     </tbody>
                   </table>
                 </div>
