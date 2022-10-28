@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.bg-foo {
+    background:url("https://cdn.pixabay.com/photo/2012/04/13/20/37/car-33556__480.png");
+    height: 200px;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .hover\:bg-bar:hover {
+    background:url("https://cdn.pixabay.com/photo/2013/07/12/15/36/passenger-car-150155__480.png");
+    height: 200px;
+    justify-content: center;
+    align-items: center;
+  }
