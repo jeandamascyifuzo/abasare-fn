@@ -3,6 +3,7 @@ import SideBar from '../components/SideBar'
 import { Routes, Route } from 'react-router-dom';
 import DashboardHeader from '../components/DashHeader'
 import Team from '../components/Team';
+import Graph from '../components/Graph';
 
 
 const DashRoute = () => {
@@ -15,6 +16,8 @@ const DashRoute = () => {
         <SideBar toggle={handleClick} style="hidden lg:flex"/>
         <Routes>
           <Route path="/team" element={<Team />} />
+          <Route path="/dashboard" element={<Graph />} />
+
         </Routes>
       </div>
     </>

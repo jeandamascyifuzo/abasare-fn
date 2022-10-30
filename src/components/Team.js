@@ -6,8 +6,6 @@ const team = () => {
   return (
     <>
       <div className='flex'>
-
-
         <div className=" lg:mt-32 ml-60 w-full h-min  lg:w-7/12 bg-white rounded-md p-4 m-2">
           <div className="w-full">
             <div className="card-header flex items-center justify-between">
@@ -124,7 +122,7 @@ const team = () => {
         <div className=" lg:mt-32 w-full h-min lg:w-4/12 bg-white rounded-md m-2 ">
           <div className="w-full">
             <div className=" flex flex-col items-center justify-center">
-              
+
               {/* <div className="mt-6">
                 <div className="profiler-name">
                   <p className=' text-xs font-semibold font-sans md:text-xl text-secondary-300'>Bus Information</p>

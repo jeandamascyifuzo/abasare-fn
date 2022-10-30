@@ -20,7 +20,7 @@ const DashHeader = () => {
 
     return (
         <>
-            <nav className="bg-[#38434e] w-screen px-4 lg:px-6 py-2.5 fixed border-b">
+            <nav className="bg-[#072081] w-screen px-4 lg:px-6 py-4 fixed border-b">
                 <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-2xl">
                     <div className='h-10 w-10 pt-2.5 text-white lg:hidden'
                         onClick={handleClick}

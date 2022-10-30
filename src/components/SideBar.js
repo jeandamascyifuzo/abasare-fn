@@ -1,18 +1,18 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { HiOutlineShoppingCart, HiCog } from "react-icons/hi"
 
 const SideBar = ({ style }) => {
     return (
         <div
-            className={`${style} flex-col fixed mt-[2px] h-[100vh] xl:mt-16 left-0 bg-[#38434e] px-4 pt-6`}>
+            className={`${style} flex-col fixed mt-[2px] h-[100vh] xl:mt-20 left-0 bg-[#38434e] px-4 pt-6`}>
             <div className="list-none pr-8">
                 <li className="mb-4 hover:text-primary">
                     <a
-                        href="#link"
+                        href="link"
                         className="flex flex-row text-white">
                         <HiOutlineShoppingCart className="w-5 mr-2 mt-1" />
-                        <span className="text-lg ">Drivers</span>
+                        <span className="text-lg ">Dashboard</span>
                     </a>
                 </li>
                 <li className="mb-4 hover:text-primary">
@@ -20,7 +20,7 @@ const SideBar = ({ style }) => {
                         href="team"
                         className="flex flex-row text-white">
                         <HiOutlineShoppingCart className="w-5 mr-2 mt-1" />
-                        <span className="text-lg ">Content 0</span>
+                        <span className="text-lg ">Drivers</span>
                     </a>
                 </li>
                 <li className="mb-4 hover:text-primary">
