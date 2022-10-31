@@ -1,23 +1,22 @@
-import DashHeader from "./components/DashHeader";
-import Increment from "./components/Increment";
-import SideBar from "./components/SideBar";
+import React from 'react';
+import Home from './pages/LandingPage';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import DashRoute from './routes/DashRoute';
-import MainRoutes from "./routes/Routes";
+import MainRoute from './routes/Routes'
+import 'react-toastify/dist/ReactToastify.css';
+import PrivateRoute from './Utils/PrivateRoute';
+
 function App() {
   return (
-  //   <div className="justify-center items-center text-center">
-  //  <DashHeader/>
-  //  <SideBar />
-  //  {/* <Increment/> */}
-  // </div>
-  <Router>
-  <Routes>
-    {/* <Route path="/login" exact element={<MainRoutes />} /> */}
-      <Route path="/dashboard/*" element={<DashRoute />} />
-    <Route path="/*" exact element={<MainRoutes />} />
-  </Routes>
-</Router>
+    <Router>
+      <Routes>
+        <Route path="/" exact element={<Home />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/dashboard/*" element={<DashRoute />} />
+        </Route>
+        <Route path="/*" exact element={<MainRoute />} />
+      </Routes>
+    </Router>
   );
 }
 

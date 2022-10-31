@@ -1,49 +1,65 @@
-import React, { useState, useContext } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { FiEyeOff } from 'react-icons/fi';
 import { MdLockOutline } from 'react-icons/md';
 import { FaRegEnvelope, FaRegEye } from 'react-icons/fa';
-import { axiosRequest } from '../api/index'
 import { ToastContainer } from "react-toastify";
-import { useNavigate, NavLink } from 'react-router-dom';
-import { setUserSession } from '../Utils/Common';
+import { NavLink } from 'react-router-dom';
 import { Button, Spinner } from 'react-bootstrap';
+import { useDispatch } from 'react-redux';
+import { login } from "../redux/reducers/login";
 import Notify from "../functions/Notify";
-import Logo from '../assets/image/myechelon-logo.png'
-
-const Login_URL = 'team/login'
 
 const Login = () => {
+  const navigate = useNavigate()
     const [passwordShown, setPasswordShown] = useState(false);
     const [loading, setLoading] = useState(false)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const navigate = useNavigate()
+    const dispatch = useDispatch()
 
     const tooglePassword = () => {
         setPasswordShown(!passwordShown);
     };
 
-    const handleLogin = async (e) => {
-        e.preventDefault()
-        setLoading(true)
-        await axiosRequest.post(Login_URL, {
-            email: email,
-            password: password,
-        }).then(res => {
-            setLoading(false)
-            const result = res.data;
-            const { status, message } = result
-            Notify(message, "success");
-            setUserSession(res.data.token, res.data.user)
-            navigate("/dashboard")
+    const handleSubmit = (e) =>{
+      e.preventDefault()
+      dispatch(
+        login({
+          email: email,
+          password: password, 
+          loggedIn: true
         })
-            .catch((error) => {
-                setLoading(false)
-                const errMessage = error.response.data.message
-                Notify(errMessage, "error");
-            })
+        )
+        if(email === "admin@gmail.com" || email === "driver@gmail.com"){
+          Notify("Logged in successfully", "success")
+          navigate("/dashboard")
+        }
+        else{
+          Notify("invalid credential", "error")
+        }
     }
+
+    // const handleLogin = async (e) => {
+    //     e.preventDefault()
+    //     setLoading(true)
+    //     await axiosRequest.post(Login_URL, {
+    //         email: email,
+    //         password: password,
+    //     }).then(res => {
+    //         setLoading(false)
+    //         const result = res.data;
+    //         const { status, message } = result
+    //         Notify(message, "success");
+    //         setUserSession(res.data.token, res.data.user)
+    //         navigate("/dashboard")
+    //     })
+    //         .catch((error) => {
+    //             setLoading(false)
+    //             const errMessage = error.response.data.message
+    //             Notify(errMessage, "error");
+    //         })
+    // }
 
     return (
         <>
@@ -60,7 +76,7 @@ const Login = () => {
             />
             <div className="font-mono min-h-screen bg-black md:flex md:flex-col md:items-center md:justify-center w-full  grow  text-center sm:flex sm:flex-row sm:items-center sm:justify-center">
                 <div className='py-4'> <span className=" px-3"> <NavLink to="/">
-                    <img src={Logo} className="mr-3 h-6 sm:h-12" alt="Logo" />
+                    {/* <img src={Logo} className="mr-3 h-6 sm:h-12" alt="Logo" /> */}
                 </NavLink></span></div>
                 <div className="md:rounded-2xl md:shadow-2xl md:flex md:w-2/3 md:max-w-4xl sm:max-w-xl sm:rounded-none sm:shadow-none">
                     <div className="md:w-full xl:w-3/5 md:p-5 sm:w-full sm:p-2 bg-[#191919] lg:rounded-tl-2xl lg:rounded-bl-2xl">
@@ -73,13 +89,13 @@ const Login = () => {
                                 Sign in to your account
                             </p>
                             <div className="flex flex-col items-center">
-                                <form>
+                                <form onSubmit={ (e) => handleSubmit(e) }>
                                     <div className="bg-gray-100 w-64 p-2 flex rounded items-center mb-2  ">
                                         <FaRegEnvelope className="text-gray-400 mr-2" />
                                         <input
                                             type="email"
                                             placeholder="Email"
-                                            className="bg-gray-100 outline-none text-sm flex-1 text-gray-400 "
+                                            className="bg-gray-100 outline-none text-sm flex-1 text-gray-800 "
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
                                         />
@@ -89,11 +105,11 @@ const Login = () => {
                                         <input
                                             placeholder="Password"
                                             type={passwordShown ? 'text' : 'password'}
-                                            className="bg-gray-100 outline-none text-sm flex-1 text-gray-400"
+                                            className="bg-gray-100 outline-none text-sm flex-1 text-gray-800"
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
                                         />
-                                        <div className="text-gray-400 cursor-pointer onClick= {()=> handleShowPassword}">
+                                        <div className="text-gray-800 cursor-pointer onClick= {()=> handleShowPassword}">
                                             {passwordShown ? (
                                                 <FaRegEye onClick={tooglePassword} />
                                             ) : (
@@ -124,7 +140,6 @@ const Login = () => {
                                         ) : (
                                             <button
                                                 className='py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white focus:ring-4 focus:outline-none'
-                                                onClick={handleLogin}
                                             >
                                                 Log In
                                             </button>
@@ -151,3 +166,4 @@ const Login = () => {
 }
 
 export default Login
+

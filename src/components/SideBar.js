@@ -1,71 +1,48 @@
 import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { HiOutlineShoppingCart, HiCog } from "react-icons/hi"
 
 const SideBar = ({ style }) => {
     return (
         <div
-            className={`${style} flex-col fixed mt-[2px] h-[100vh] xl:mt-20 left-0 bg-[#38434e] px-4 pt-6`}>
+            className={`${style} flex-col fixed h-[100%] mt-[2px] xl:mt-[8vh] left-0 bg-[#191919] border-r px-4 pt-4`}
+        >
             <div className="list-none pr-8">
                 <li className="mb-4 hover:text-primary">
-                    <a
-                        href="link"
+                    <NavLink
+                        to="team"
                         className="flex flex-row text-white">
                         <HiOutlineShoppingCart className="w-5 mr-2 mt-1" />
-                        <span className="text-lg ">Dashboard</span>
-                    </a>
-                </li>
-                <li className="mb-4 hover:text-primary">
-                    <a
-                        href="team"
-                        className="flex flex-row text-white">
-                        <HiOutlineShoppingCart className="w-5 mr-2 mt-1" />
-                        <span className="text-lg ">Drivers</span>
-                    </a>
-                </li>
-                <li className="mb-4 hover:text-primary">
-                    <a
-                        href="team"
-                        className="flex flex-row text-white">
-                        <HiOutlineShoppingCart className="w-5 mr-2 mt-1" />
-                        <span className="text-lg ">Content 1</span>
-                    </a>
-                </li>
-                <li className="mb-4 hover:text-primary">
-                    <a
-                        href="team"
-                        className="flex flex-row text-white">
-                        <HiOutlineShoppingCart className="w-5 mr-2 mt-1" />
-                        <span className="text-lg ">Content 2</span>
-                    </a>
-                </li>
-                <li className="mb-4 hover:text-primary">
-                    <a
-                       href="team"
-                        className="flex flex-row text-white">
-                        <HiOutlineShoppingCart className="w-5 mr-2 mt-1" />
-                        <span className="text-lg ">Content 3</span>
-                    </a>
+                        <span className="text-base ">Driver</span>
+                    </NavLink>
                 </li>
                 <li className="mb-4 hover:text-primary">
                     <NavLink
-                        to={"team"}
+                        to="portfolio"
                         className="flex flex-row text-white">
                         <HiOutlineShoppingCart className="w-5 mr-2 mt-1" />
-                        <span className="text-lg ">
-                        Content 4
+                        <span className="text-base ">Contents</span>
+                    </NavLink>
+                </li>
+                <li className="mb-4 hover:text-primary">
+                    <NavLink
+                        to="service"
+                        className="flex flex-row text-white">
+                        <HiOutlineShoppingCart className="w-5 mr-2 mt-1" />
+                        <span className="text-base ">
+                            Contents
                         </span>
                     </NavLink>
                 </li>
                 <li className="mb-4 hover:text-primary">
-                    <a
-                        href="team"
+                    <NavLink
+                        to="message"
                         className="flex flex-row text-white">
-                         <HiOutlineShoppingCart className="w-5 mr-2 mt-1" />
-                        <span className="text-lg ">
-                        Content 5
+                        <HiOutlineShoppingCart className="w-5 mr-2 mt-1" />
+                        <span className="text-base ">
+                            Contents
                         </span>
-                    </a>
+                    </NavLink>
                 </li>
             </div>
         </div>
