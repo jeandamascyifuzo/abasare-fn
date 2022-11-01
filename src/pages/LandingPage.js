@@ -1,13 +1,13 @@
 import React from 'react'
-import HomePage from '../components/Home'
-import NavBar from '../components/NavBar'
+import Login from '../components/Login'
+// import NavBar from '../components/NavBar'
 
 const Home = () => {
   return (
     <div className='bg-black'>
       <div className="unslate_co--site-inner overflow-x-hidden">
-        <NavBar />
-        <HomePage />
+        {/* <NavBar /> */}
+        <Login />
       </div>
     </div>
   )

@@ -17,9 +17,10 @@ const Login = () => {
     const [passwordShown, setPasswordShown] = useState(false);
     const [loading, setLoading] = useState(false)
     const [email, setEmail] = useState("")
+    console.log("🚀 ~ file: Login.js ~ line 20 ~ Login ~ email ctrl+alt+l", email)
     const [password, setPassword] = useState("")
+    console.log("🚀 ~ file: Login.js ~ line 22 ~ Login ~ password", password)
     const navigate = useNavigate()
-
     const tooglePassword = () => {
         setPasswordShown(!passwordShown);
     };
@@ -60,7 +61,7 @@ const Login = () => {
             />
             <div className="font-mono min-h-screen bg-black md:flex md:flex-col md:items-center md:justify-center w-full  grow  text-center sm:flex sm:flex-row sm:items-center sm:justify-center">
                 <div className='py-4'> <span className=" px-3"> <NavLink to="/">
-                    <img src={Logo} className="mr-3 h-6 sm:h-12" alt="Logo" />
+                    <img src="https://cdn.pixabay.com/photo/2015/01/05/11/02/wordpress-589121__480.jpg" className="mr-3 h-6 sm:h-12 sm:w-12 rounded-full object-cover" alt="Logo" />
                 </NavLink></span></div>
                 <div className="md:rounded-2xl md:shadow-2xl md:flex md:w-2/3 md:max-w-4xl sm:max-w-xl sm:rounded-none sm:shadow-none">
                     <div className="md:w-full xl:w-3/5 md:p-5 sm:w-full sm:p-2 bg-[#191919] lg:rounded-tl-2xl lg:rounded-bl-2xl">

@@ -18,7 +18,7 @@ const SideBar = ({ style }) => {
                 </li>
                 <li className="mb-4 hover:text-primary">
                     <NavLink
-                        to="portfolio"
+                        // to="contents"
                         className="flex flex-row text-white">
                         <HiOutlineShoppingCart className="w-5 mr-2 mt-1" />
                         <span className="text-base ">Contents</span>
@@ -26,7 +26,7 @@ const SideBar = ({ style }) => {
                 </li>
                 <li className="mb-4 hover:text-primary">
                     <NavLink
-                        to="service"
+                        // to="contents"
                         className="flex flex-row text-white">
                         <HiOutlineShoppingCart className="w-5 mr-2 mt-1" />
                         <span className="text-base ">
@@ -36,7 +36,7 @@ const SideBar = ({ style }) => {
                 </li>
                 <li className="mb-4 hover:text-primary">
                     <NavLink
-                        to="message"
+                        // to="contents"
                         className="flex flex-row text-white">
                         <HiOutlineShoppingCart className="w-5 mr-2 mt-1" />
                         <span className="text-base ">
