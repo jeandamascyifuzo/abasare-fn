@@ -52,7 +52,6 @@ const Leaders = () => {
           </div>
           <div className="card-body">
             <form className=" py-3 px-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-
               <div className="input my-3 h-9 md:pr-2">
                 <div className="grouped-input flex items-center h-full w-full rounded-md">
                   <input
