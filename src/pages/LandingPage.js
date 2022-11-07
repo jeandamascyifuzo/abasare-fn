@@ -4,7 +4,7 @@ import Login from '../components/Login'
 
 const Home = () => {
   return (
-    <div className='bg-[#38434e]'>
+    <div className='bg-white'>
       <div className="unslate_co--site-inner overflow-x-hidden">
         {/* <NavBar /> */}
         <Login />

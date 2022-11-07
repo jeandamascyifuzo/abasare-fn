@@ -33,7 +33,7 @@ const DashboardHeader = () => {
                 <div className="flex items-center">
                     <img src="https://cdn.pixabay.com/photo/2015/01/05/11/02/wordpress-589121__480.jpg" alt="logo"
                         className='absolute ml-[40%] rounded-full object-cover md:ml-[50%] lg:ml-6 h-6 w-6 sm:h-10 sm:w-10 mr-2' />
-                    <span className="self-center text-xl font-semibold whitespace-nowrap text-white">Abasare</span>
+                    <span className="self-center text-xl font-semibold whitespace-nowrap text-white"></span>
                 </div>
                 <div className="flex items-center justify-center h-full lg:w-full">
                     <div className="relative">

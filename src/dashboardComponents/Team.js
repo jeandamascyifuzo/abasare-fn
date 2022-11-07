@@ -43,7 +43,7 @@ const Leaders = () => {
           createTeamModel === true ? "block" : "hidden"
         }`}
       >
-        <div className="bg-white w-full sm:w-3/4 md:w-1/2  xl:w-4/12 rounded-lg p-4 pb-8">
+        <div className="bg-white w-full sm:w-3/4 md:w-1/2  xl:w-4/5 rounded-lg p-4 pb-8">
           <div className="card-title w-full flex  flex-wrap justify-center items-center  ">
             <h3 className="font-bold text-sm text-center w-11/12 uppercase">
               Add a Driver
@@ -51,66 +51,175 @@ const Leaders = () => {
             <hr className=" bg-primary border-b my-3 w-full" />
           </div>
           <div className="card-body">
-            <form className=" py-3 px-8">
-              <div className="input my-3 h-9 ">
+            <form className=" py-3 px-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+
+              <div className="input my-3 h-9 md:pr-2">
                 <div className="grouped-input flex items-center h-full w-full rounded-md">
                   <input
                     type="text"
                     name="name"
                     className="border border-gray-300 rounded outline-none px-2 pb-10 font-sans text-xs py-2 w-full"
-                    placeholder="names"
+                    placeholder="Full Name"
                   />
                 </div>
               </div>
-              <div className="input my-3 h-9 ">
+              <div className="input my-3 h-9 md:pr-2">
+                <div className="grouped-input flex items-center h-full w-full rounded-md">
+                  <input
+                    type="text"
+                    name="address"
+                    className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
+                    placeholder="Address"
+                  />
+                </div>
+              </div>
+              <div className="input my-3 h-9 md:pr-2">
                 <div className="grouped-input flex items-center h-full w-full rounded-md">
                   <input
                     type="text"
                     name="email"
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
-                    placeholder="Email"
+                    placeholder="Email: example@gmail.com"
                   />
                 </div>
               </div>
-
-              <div className="input my-3 h-9 ">
+              <div className="input my-3 h-9 md:pr-2">
+                <div className="grouped-input flex items-center h-full w-full rounded-md">
+                  <input
+                    type="number"
+                    name="cityName"
+                    className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
+                    placeholder="City Name"
+                  />
+                </div>
+              </div>
+              <div className="input my-3 h-9 md:pr-2">
+                <div className="grouped-input flex items-center h-full w-full rounded-md">
+                  <input
+                    type="number"
+                    name="phoneNumber"
+                    className=" border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
+                    placeholder="Telephone Number"
+                  />
+                </div>
+              </div>
+              <div className="input my-3 h-9 md:pr-2">
+                <div className="grouped-input flex items-center h-full w-full rounded-md">
+                  <input
+                    type="number"
+                    name="telephoneNumber"
+                    className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
+                    placeholder="Alternate Telephone Number"
+                  />
+                </div>
+              </div>
+              <div className="input my-3 h-9 md:pr-2">
                 <div className="grouped-input flex items-center h-full w-full rounded-md">
                   <input
                     type="text"
-                    name="name"
-                    className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
-                    placeholder="status"
+                    name="gender"
+                    className="border border-gray-300 rounded outline-none px-2 pb-10 font-sans text-xs py-2 w-full"
+                    placeholder="Gender"
                   />
                 </div>
               </div>
-
-              <div className="input my-3 h-9 ">
-                <div className="grouped-input flex items-center h-full w-full rounded-md">
-                  <input
-                    type="number"
-                    name="name"
-                    className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
-                    placeholder="Telephone"
-                  />
-                </div>
-              </div>
-              <div className="input my-3 h-9 ">
+              <div className="input my-3 h-9 md:pr-2">
                 <div className="grouped-input flex items-center h-full w-full rounded-md">
                   <input
                     type="file"
-                    name="image"
-                    className=" border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
-                    placeholder="profile picture"
+                    name="avatar"
+                    className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
+                    placeholder="Profile Image"
                   />
                 </div>
               </div>
-              <div className="input my-3 h-9 ">
+              <div className="input my-3 h-9 md:pr-2">
                 <div className="grouped-input flex items-center h-full w-full rounded-md">
                   <input
-                    type="number"
-                    name="boolean"
+                    type="text"
+                    name="licenseNumber"
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
-                    placeholder="Commision"
+                    placeholder="License Number"
+                  />
+                </div>
+              </div>
+              <div className="input my-3 h-9 md:pr-2">
+                <div className="grouped-input flex items-center h-full w-full rounded-md">
+                  <input
+                    type="file"
+                    name="licenseImageFont"
+                    className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
+                    placeholder="FontSide of licenseImage"
+                  />
+                </div>
+              </div>
+              <div className="input my-3 h-9 md:pr-2">
+                <div className="grouped-input flex items-center h-full w-full rounded-md">
+                  <input
+                    type="file"
+                    name="licenseImageBack"
+                    className=" border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
+                    placeholder="BackSide of licenseImage"
+                  />
+                </div>
+              </div>
+              <div className="input my-3 h-9 md:pr-2">
+                <div className="grouped-input flex items-center h-full w-full rounded-md">
+                  <input
+                    type="text"
+                    name="status"
+                    className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
+                    placeholder="Status"
+                  />
+                </div>
+              </div>
+              <div className="input my-3 h-9 md:pr-2">
+                <div className="grouped-input flex items-center h-full w-full rounded-md">
+                  <input
+                    type="text"
+                    name="acceptingBooking"
+                    className="border border-gray-300 rounded outline-none px-2 pb-10 font-sans text-xs py-2 w-full"
+                    placeholder="Accepting Booking"
+                  />
+                </div>
+              </div>
+              <div className="input my-3 h-9 md:pr-2">
+                <div className="grouped-input flex items-center h-full w-full rounded-md">
+                  <input
+                    type="text"
+                    name="lastLocationLatitude"
+                    className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
+                    placeholder="last Location Latitude"
+                  />
+                </div>
+              </div>
+              <div className="input my-3 h-9 md:pr-2">
+                <div className="grouped-input flex items-center h-full w-full rounded-md">
+                  <input
+                    type="text"
+                    name="lastLocationLongitude"
+                    className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
+                    placeholder="Last Location Longitude"
+                  />
+                </div>
+              </div>
+              <div className="input my-3 h-9 md:pr-2">
+                <div className="grouped-input flex items-center h-full w-full rounded-md">
+                  <input
+                    type="text"
+                    name="lastLocationUpdatedAt"
+                    className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
+                    placeholder="Last Location UpdatedAt"
+                  />
+                </div>
+              </div>
+              <div className="input my-3 h-9 md:pr-2">
+                <div className="grouped-input flex items-center h-full w-full rounded-md">
+                  <input
+                    type="text"
+                    name="commission"
+                    className=" border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
+                    placeholder="Commission"
                   />
                 </div>
               </div>

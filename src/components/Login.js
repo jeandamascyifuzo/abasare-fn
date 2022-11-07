@@ -64,7 +64,7 @@ const Login = () => {
         draggable
         pauseOnHover
       />
-      <div className="font-mono min-h-screen bg-[#38434e] md:flex md:flex-col md:items-center md:justify-center w-full  grow  text-center sm:flex sm:flex-row sm:items-center sm:justify-center">
+      <div className="font-mono min-h-screen bg-[#38434e] md:flex md:flex-col md:items-center md:justify-center w-full grow text-center sm:flex sm:flex-row sm:items-center sm:justify-center">
         <div className="py-4">
           {" "}
           <span className=" px-3">
@@ -118,7 +118,7 @@ const Login = () => {
                     </div>
                   </div>
                   <div className="flex w-64 justify-between rounded mb-5 mt-5">
-                    <Link to="/forget" className="text-xs text-white ">
+                    <Link to="#" className="text-xs text-white ">
                       Forgot Password?
                     </Link>
                   </div>
