@@ -11,9 +11,9 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" exact element={<Home />} />
-        <Route element={<PrivateRoute />}>
+        {/* <Route element={<PrivateRoute />}> */}
           <Route path="/dashboard/*" element={<DashRoute />} />
-        </Route>
+        {/* </Route> */}
         <Route path="/*" exact element={<MainRoute />} />
       </Routes>
     </Router>

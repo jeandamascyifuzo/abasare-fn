@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { FaTrash, FaEdit } from "react-icons/fa";
 import { ToastContainer } from "react-toastify";
+import axiosRequest from "../api/index";
+import Axios from "axios";
+import Notify from "../functions/Notify";
 
 const Leaders = () => {
   const [createTeamModel, setCreateTeamModel] = useState(false);
   const [deleteTeamModel, setDeleteTeamModel] = useState(false);
   const [updateTeamModel, setUpdateTeamModel] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [Data, setData] = useState([]);
 
   const removeModel = () => {
     let newState = !createTeamModel;
@@ -22,6 +27,35 @@ const Leaders = () => {
     setUpdateTeamModel(newState);
   };
 
+  const GetDrivers = () => {
+    const url = "drivers/profile";
+    setLoading(true);
+    axiosRequest
+      .get(url)
+      .then((response) => {
+        setLoading(false);
+        const result = response.data;
+        console.log("<><>",result.data)
+        const { status, message, data } = result;
+        if (status !== "SUCCESS") {
+          setData(data);
+        } else {
+          setData(data);
+        }
+      })
+      .catch((error) => {
+        setLoading(false);
+        if (error.code !== "ERR_NETWORK") {
+          Notify(error.response.data.message, "error");
+        } else {
+          Notify(error.message, "error");
+        }
+      });
+  };
+
+  useEffect(() => {
+    GetDrivers();
+  }, []);
 
   return (
     <>
@@ -242,12 +276,12 @@ const Leaders = () => {
                     Processing...
                   </Button>
                 ) : ( */}
-                  <button
-                    className="py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white focus:ring-4 focus:outline-none"
-                    // onClick={handleSubmite}
-                  >
-                    Save
-                  </button>
+                <button
+                  className="py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white focus:ring-4 focus:outline-none"
+                  // onClick={handleSubmite}
+                >
+                  Save
+                </button>
                 {/* )} */}
               </div>
             </form>
@@ -274,8 +308,8 @@ const Leaders = () => {
               <div>
                 <h2 className="text-base m-4">
                   Do you really want to remove{" "}
-                  <span className="italic text-black">DiverName</span>{" "}
-                  from the Drivers?
+                  <span className="italic text-black">DiverName</span> from the
+                  Drivers?
                 </h2>
               </div>
               <div className="w-full flex justify-between">
@@ -298,12 +332,12 @@ const Leaders = () => {
                     Processing...
                   </Button>
                 ) : ( */}
-                  <button
-                    className="text-white py-2 w-[40%] md:w-1/3 bg-red-700 rounded"
-                    // onClick={handleDelete}
-                  >
-                    Delete
-                  </button>
+                <button
+                  className="text-white py-2 w-[40%] md:w-1/3 bg-red-700 rounded"
+                  // onClick={handleDelete}
+                >
+                  Delete
+                </button>
                 {/* )} */}
               </div>
             </form>
@@ -321,8 +355,7 @@ const Leaders = () => {
         <div className="bg-white sm:w-3/4 md:w-1/2  xl:w-4/12 rounded-lg p-4 pb-8">
           <div className="card-title w-full flex  flex-wrap justify-center items-center  ">
             <h3 className="font-bold text-sm text-gray-700 text-center w-11/12">
-              Update <span className="italic text-black">DriverName</span>{" "}
-              Info
+              Update <span className="italic text-black">DriverName</span> Info
             </h3>
             <hr className=" bg-primary border-b my-3 w-full" />
           </div>
@@ -408,12 +441,12 @@ const Leaders = () => {
                     Processing...
                   </Button>
                 ) : ( */}
-                  <button
-                    className="py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white focus:ring-4 focus:outline-none"
-                    // onClick={handleUpdate}
-                  >
-                    Update
-                  </button>
+                <button
+                  className="py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white focus:ring-4 focus:outline-none"
+                  // onClick={handleUpdate}
+                >
+                  Update
+                </button>
                 {/* )} */}
               </div>
             </form>
@@ -423,13 +456,13 @@ const Leaders = () => {
       {/* =========================== End::  updateTeamModel =============================== */}
 
       <div
-        className="overflow-x-auto bg-[#38434e] pb-10 min-h-screen lg:ml-44 px-2 lg:px-10"
+        className="overflow-x-auto bg-gray-900 pb-10 min-h-screen lg:ml-44 px-2 lg:px-10"
         id="contact-section"
       >
         <div className="flex items-left px-4 lg:px-7 pt-14 pb-8">
           <div className="space-x-8">
             <button
-              className="font-serif bg-[#072081] hover:bg-transparent border border-[#072081] hover:text-black hover:bg-white font-medium rounded-lg text-base px-5 py-2.5 mt-8 text-center mr-3 md:mr-0 cursor-pointer"
+              className="font-serif bg-[#2563eb] hover:bg-transparent border border-[#2563eb] hover:text-black hover:bg-white font-medium rounded-lg text-base px-5 py-2.5 mt-8 text-center mr-3 md:mr-0 cursor-pointer"
               onClick={removeModel}
             >
               Driver +
@@ -508,7 +541,132 @@ const Leaders = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
+                      {Data.map((item) => (
+                        <tr key={item._d}>
+                        <td className="px-5 py-3 border-b border-gray-200 text-sm">
+                          <img
+                            className="w-10 h-10 rounded-full shadow-lg object-cover"
+                            src={item.profilePicture}
+                            alt="Bonnie"
+                          />
+                        </td>
+                        <td className="p-3 border-b border-gray-200 text-sm">
+                          <div className="flex items-center">
+                            <div>
+                              <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                                {item.fullName}
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-5 py-3 border-b border-gray-200 text-sm">
+                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                            email
+                          </p>
+                        </td>
+                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                            {item.phoneNumber}
+                          </p>
+                        </td>
+                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                            {item.alternatePhoneNumber}
+                          </p>
+                        </td>
+                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                            {item.gender}
+                          </p>
+                        </td>
+
+                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                            {item.licenseNumber}
+                          </p>
+                        </td>
+                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                            fontside licenseImage
+                          </p>
+                        </td>
+                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                            backside licenseImage
+                          </p>
+                        </td>
+                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                            {item.status}
+                          </p>
+                        </td>
+                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                            {item.acceptingBooking}
+                          </p>
+                        </td>
+                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                            latitude
+                          </p>
+                        </td>
+                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                            longitude
+                          </p>
+                        </td>
+                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                            lastLocationUpdatedAt
+                          </p>
+                        </td>
+                        <td className="px-5 py-3 border-b border-gray-200 text-sm">
+                          <div className="flex items-center">
+                            <div>
+                              <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                                commission
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-5 py-3 border-b border-gray-200 text-sm">
+                          <div className="flex items-center">
+                            <div>
+                              <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                                {item.address}
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-5 py-3 border-b border-gray-200 text-sm">
+                          <div className="flex items-center">
+                            <div>
+                              <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                                {item.cityName}
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-5 py-3 border-b border-gray-200 text-gray-500 cursor-pointer text-lg">
+                          <div className="flex">
+                            <div
+                              className="cursor-pointer mr-2 text-gray-500"
+                              onClick={() => updateMemberModel()}
+                            >
+                              <FaEdit />
+                            </div>
+                            <div
+                              className="cursor-pointer text-[#FF3D3D]"
+                              onClick={() => removeDeleteModel()}
+                            >
+                              <FaTrash />
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                      ))}
+
+                      {/* <tr>
                         <td className="px-5 py-3 border-b border-gray-200 text-sm">
                           <img
                             className="w-10 h-10 rounded-full shadow-lg object-cover"
@@ -629,129 +787,7 @@ const Leaders = () => {
                             </div>
                           </div>
                         </td>
-                      </tr>
-                      <tr>
-                        <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                          <img
-                            className="w-10 h-10 rounded-full shadow-lg object-cover"
-                            src="https://cdn.pixabay.com/photo/2022/10/09/04/28/deer-7508187__340.jpg"
-                            alt="Bonnie"
-                          />
-                        </td>
-                        <td className="p-3 border-b border-gray-200 text-sm">
-                          <div className="flex items-center">
-                            <div>
-                              <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                                name
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            email
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            telephone
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            other Telephone
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            gender
-                          </p>
-                        </td>
-
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            licenseNumber
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            fontside licenseImage
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            backside licenseImage
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            status
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            acceptingBooking
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            latitude
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            longitude
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            lastLocationUpdatedAt
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                          <div className="flex items-center">
-                            <div>
-                              <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                                commission
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                          <div className="flex items-center">
-                            <div>
-                              <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                                Address
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                          <div className="flex items-center">
-                            <div>
-                              <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                                city
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200 text-gray-500 cursor-pointer text-lg">
-                          <div className="flex">
-                            <div
-                              className="cursor-pointer mr-2 text-gray-500"
-                              onClick={() => updateMemberModel()}
-                            >
-                              <FaEdit />
-                            </div>
-                            <div
-                              className="cursor-pointer text-[#FF3D3D]"
-                              onClick={() => removeDeleteModel()}
-                            >
-                              <FaTrash />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
+                      </tr> */}
                     </tbody>
                   </table>
                 </div>

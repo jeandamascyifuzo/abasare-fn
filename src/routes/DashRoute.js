@@ -2,7 +2,7 @@ import React from 'react'
 import SideBar from '../components/SideBar'
 import { Routes, Route } from 'react-router-dom';
 import DashboardHeader from '../components/DashboardHeader'
-import Team from '../dashboardComponents/Team';
+import Driver from '../dashboardComponents/Driver';
 
 const DashRoute = () => {
   return (
@@ -11,7 +11,7 @@ const DashRoute = () => {
         <DashboardHeader />
         <SideBar style="hidden lg:flex" />
         <Routes>
-          <Route path="/team" element={<Team />} />
+          <Route path="/driver" element={<Driver />} />
         </Routes>
       </div>
     </>

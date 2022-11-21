@@ -5,7 +5,7 @@ import { getToken } from './Common';
 // handle the private routes
 function PrivateRoute() {
     return (
-        getToken() ? <Outlet/> : <Navigate to='/login' />
+        getToken() ? <Outlet/> : <Navigate to='/' />
         )
 }
 
