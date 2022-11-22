@@ -12,6 +12,26 @@ const Leaders = () => {
   const [loading, setLoading] = useState(false);
   const [Data, setData] = useState([]);
 
+  const [fullName, setFullName] = useState('')
+  // const [userType, setUserType] = useState('')
+  const [profilePicture, setProfilePicture] = useState('')
+  const [email, setEmail] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [alternatePhoneNumber, setAlternatePhoneNumber] = useState('')
+  const [gender, setGender] = useState('')
+  const [licenseNumber, setLicenseNumber] = useState('')
+  const [status, setStatus] = useState('')
+  const [latitude, setLatitude] = useState('')
+  const [longitude, setLongitude] = useState('')
+  const [address, setAddress] = useState('')
+  const [cityName, setCityName] = useState('')
+  const [fontSide, setFontSide] = useState('')
+  const [backSide, setBackSide] = useState('')
+  const [acceptingBooking, setAcceptingBooking] = useState('')
+  const [yearExperience, setYearExperience] = useState('')
+  const [rides, setRides] = useState('')
+  const [cost, setCost] = useState('')
+
   const removeModel = () => {
     let newState = !createTeamModel;
     setCreateTeamModel(newState);
@@ -53,6 +73,36 @@ const Leaders = () => {
       });
   };
 
+  const handleSubmite = (e) => {
+    e.preventDefault()
+    const url = 'driver'
+      const Credentials = { email, fullName, address, cityName, phoneNumber, alternatePhoneNumber, gender, profilePicture, licenseNumber, fontSide, backSide, status, acceptingBooking, yearExperience, rides, cost, latitude, longitude }
+      setLoading(true)
+      axiosRequest.post(url, Credentials)
+        .then(response => {
+          setLoading(false)
+          const result = response.data;
+          Notify(result.message, "success");
+          const { status, message, data } = result;
+          if (status !== 'SUCCESS') {
+            GetDrivers();
+            // setCreatePortfolioModel(false)
+          }
+          else {
+            console.log(message)
+          }
+        })
+        .catch(error => {
+          setLoading(false)
+          if (error.code !== "ERR_NETWORK") {
+            Notify(error.response.data.message, "error");
+          }
+          else {
+            Notify(error.message, "error");
+          }
+        })
+  }
+
   useEffect(() => {
     GetDrivers();
   }, []);
@@ -71,9 +121,9 @@ const Leaders = () => {
         pauseOnHover
       />
 
-      {/* =========================== Start:: CreateTeamModel =============================== */}
+      {/* =========================== Start:: CreateDriverModel =============================== */}
       <div
-        className={`h-screen w-screen bg-gray-600 bg-opacity-30 backdrop-blur-sm fixed flex items-center justify-center px-4 ${
+        className={`mt-4 h-screen w-screen bg-gray-600 bg-opacity-30 backdrop-blur-sm fixed flex items-center justify-center px-4 ${
           createTeamModel === true ? "block" : "hidden"
         }`}
       >
@@ -91,6 +141,8 @@ const Leaders = () => {
                   <input
                     type="text"
                     name="name"
+                    value={fullName}
+                    onChange = {(e)=>setFullName(e.target.value)}
                     className="border border-gray-300 rounded outline-none px-2 pb-10 font-sans text-xs py-2 w-full"
                     placeholder="Full Name"
                   />
@@ -101,6 +153,8 @@ const Leaders = () => {
                   <input
                     type="text"
                     name="address"
+                    value={address}
+                    onChange = {(e)=> setAddress(e.target.value)}
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="Address"
                   />
@@ -111,6 +165,8 @@ const Leaders = () => {
                   <input
                     type="text"
                     name="email"
+                    value={email}
+                    onChange = {(e)=> setEmail(e.target.value)}
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="Email: example@gmail.com"
                   />
@@ -119,8 +175,10 @@ const Leaders = () => {
               <div className="input my-3 h-9 md:pr-2">
                 <div className="grouped-input flex items-center h-full w-full rounded-md">
                   <input
-                    type="number"
+                    type="text"
                     name="cityName"
+                    value={cityName}
+                    onChange = {(e)=> setCityName(e.target.value)}
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="City Name"
                   />
@@ -131,6 +189,8 @@ const Leaders = () => {
                   <input
                     type="number"
                     name="phoneNumber"
+                    value={phoneNumber}
+                    onChange = {(e)=> setPhoneNumber(e.target.value)}
                     className=" border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="Telephone Number"
                   />
@@ -141,6 +201,8 @@ const Leaders = () => {
                   <input
                     type="number"
                     name="telephoneNumber"
+                    value={alternatePhoneNumber}
+                    onChange = {(e)=> setAlternatePhoneNumber(e.target.value)}
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="Alternate Telephone Number"
                   />
@@ -151,6 +213,8 @@ const Leaders = () => {
                   <input
                     type="text"
                     name="gender"
+                    value={gender}
+                    onChange = {(e)=> setGender(e.target.value)}
                     className="border border-gray-300 rounded outline-none px-2 pb-10 font-sans text-xs py-2 w-full"
                     placeholder="Gender"
                   />
@@ -171,6 +235,8 @@ const Leaders = () => {
                   <input
                     type="text"
                     name="licenseNumber"
+                    value={licenseNumber}
+                    onChange = {(e)=> setLicenseNumber(e.target.value)}
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="License Number"
                   />
@@ -201,6 +267,8 @@ const Leaders = () => {
                   <input
                     type="text"
                     name="status"
+                    value={status}
+                    onChange = {(e)=> setStatus(e.target.value)}
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="Status"
                   />
@@ -211,6 +279,8 @@ const Leaders = () => {
                   <input
                     type="text"
                     name="acceptingBooking"
+                    value={acceptingBooking}
+                    onChange = {(e)=> setAcceptingBooking(e.target.value)}
                     className="border border-gray-300 rounded outline-none px-2 pb-10 font-sans text-xs py-2 w-full"
                     placeholder="Accepting Booking"
                   />
@@ -221,6 +291,8 @@ const Leaders = () => {
                   <input
                     type="text"
                     name="lastLocationLatitude"
+                    value={latitude}
+                    onChange = {(e)=> setLatitude(e.target.value)}
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="last Location Latitude"
                   />
@@ -231,6 +303,8 @@ const Leaders = () => {
                   <input
                     type="text"
                     name="lastLocationLongitude"
+                    value={longitude}
+                    onChange = {(e)=> setLongitude(e.target.value)}
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="Last Location Longitude"
                   />
@@ -256,9 +330,10 @@ const Leaders = () => {
                   />
                 </div>
               </div>
-              <div className="w-full flex justify-between">
+            </form>
+              <div className="w-full px-44 flex justify-between">
                 <button
-                  className="py-2 w-[40%] md:w-1/3 bg-transparent rounded border border-gray-800 font-sans text-sm text-gray-900"
+                  className="py-2 mr-4 w-[40%] md:w-44 bg-gray-300 rounded border border-gray-800 font-sans text-sm text-gray-900"
                   onClick={(e) => removeModel(e.preventDefault())}
                 >
                   Cancel
@@ -277,18 +352,17 @@ const Leaders = () => {
                   </Button>
                 ) : ( */}
                 <button
-                  className="py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white focus:ring-4 focus:outline-none"
-                  // onClick={handleSubmite}
+                  className="py-2 w-[40%] md:w-44 rounded  bg-[#2563eb] border border-gray-800 text-white focus:ring-4 focus:outline-none"
+                  onClick={handleSubmite}
                 >
                   Save
                 </button>
                 {/* )} */}
               </div>
-            </form>
           </div>
         </div>
       </div>
-      {/* =========================== End::  CreateTeamModel =============================== */}
+      {/* =========================== End::  CreateDriverModel =============================== */}
 
       {/* =========================== Start::  deleteTeamModel =============================== */}
       <div
@@ -602,7 +676,7 @@ const Leaders = () => {
                         </td>
                         <td className="px-5 py-3 border-b border-gray-200  text-sm">
                           <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            {item.acceptingBooking}
+                            true
                           </p>
                         </td>
                         <td className="px-5 py-3 border-b border-gray-200  text-sm">
@@ -624,7 +698,7 @@ const Leaders = () => {
                           <div className="flex items-center">
                             <div>
                               <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                                commission
+                                300
                               </p>
                             </div>
                           </div>

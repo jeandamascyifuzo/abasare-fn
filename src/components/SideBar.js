@@ -10,7 +10,7 @@ const SideBar = ({ style }) => {
             <div className="list-none pr-8">
                 <li className="mb-4 hover:text-primary">
                     <NavLink
-                        to="team"
+                        to="driver"
                         className="flex flex-row text-white">
                         <HiOutlineShoppingCart className="w-5 mr-2 mt-1" />
                         <span className="text-base ">Driver</span>
