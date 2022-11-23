@@ -4,7 +4,6 @@ import { ToastContainer } from "react-toastify";
 import axiosRequest from "../api/index";
 import Axios from "axios";
 import Notify from "../functions/Notify";
-import cloudinary from 'cloudinary'
 
 const Leaders = () => {
   const [createTeamModel, setCreateTeamModel] = useState(false);
@@ -108,16 +107,6 @@ const Leaders = () => {
     GetDrivers();
   }, []);
 
-const handlerOpenWeidget = ()=>{
-  var myWidget = cloudinary.createUploadWidget({
-    cloudName: 'my_cloud_name', 
-    uploadPreset: 'my_preset'}, (error, result) => { 
-      if (!error && result && result.event === "success") { 
-        console.log('Done! Here is the image info: ', result.info); 
-      }
-    }
-  )
-}
   return (
     <>
       <ToastContainer
@@ -548,7 +537,7 @@ const handlerOpenWeidget = ()=>{
           <div className="space-x-8">
             <button
               className="font-serif bg-[#2563eb] hover:bg-transparent border border-[#2563eb] hover:text-black hover:bg-white font-medium rounded-lg text-base px-5 py-2.5 mt-8 text-center mr-3 md:mr-0 cursor-pointer"
-              onClick={()=>handlerOpenWeidget}
+              onClick={removeModel}
             >
               Driver +
             </button>
