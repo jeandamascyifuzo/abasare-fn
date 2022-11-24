@@ -1,0 +1,11 @@
+
+.cloudinary-btn:hover{
+    padding:10px;
+    background-color: rgb(75, 132, 189);
+    transition: 0.3s ease-in-out;
+    background-size: 14%;
+    text-align: left;
+    background-position-X:80% ;
+    background-position-Y:10px ;
+
+}

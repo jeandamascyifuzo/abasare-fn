@@ -1,6 +1,8 @@
 import React from 'react'
 import Login from '../components/Login'
 import SignIn from '../components/SignIn'
+import TestUpload from '../components/TestUpload'
+import FileUpload from '../Upload/Upload'
 // import NavBar from '../components/NavBar'
 
 const Home = () => {
@@ -10,6 +12,8 @@ const Home = () => {
         {/* <NavBar /> */}
         {/* <Login /> */}
         <SignIn />
+        {/* <TestUpload/> */}
+        {/* <FileUpload/> */}
       </div>
     </div>
   )
