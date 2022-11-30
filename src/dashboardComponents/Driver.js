@@ -14,7 +14,8 @@ const Leaders = () => {
 
   const [fullName, setFullName] = useState('')
   // const [userType, setUserType] = useState('')
-  const [profilePicture, setProfilePicture] = useState('')
+
+  
   const [email, setEmail] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
   const [alternatePhoneNumber, setAlternatePhoneNumber] = useState('')
@@ -25,8 +26,13 @@ const Leaders = () => {
   const [longitude, setLongitude] = useState('')
   const [address, setAddress] = useState('')
   const [cityName, setCityName] = useState('')
+  
+  const [profilePicture, setProfilePicture] = useState('')
+
   const [fontSide, setFontSide] = useState('')
+
   const [backSide, setBackSide] = useState('')
+
   const [acceptingBooking, setAcceptingBooking] = useState('')
   const [yearExperience, setYearExperience] = useState('')
   const [rides, setRides] = useState('')
@@ -76,6 +82,16 @@ const Leaders = () => {
   const handleSubmite = (e) => {
     e.preventDefault()
     const url = 'driver'
+    const formData = new FormData()
+    formData.append("file", profilePicture)
+    formData.append("upload_preset", "zayol3ca")
+    setLoading(true)
+    Axios.post("https://api.cloudinary.com/v1_1/mychelon/image/upload", formData).then((response) => {
+      setLoading(false)
+      setProfilePicture(response.data.secure_url)
+      // setProfilePicture(response.data.secure_url)
+      // setProfilePicture(response.data.secure_url)
+      const protifolioImage = response.data.secure_url
       const Credentials = { email, fullName, address, cityName, phoneNumber, alternatePhoneNumber, gender, profilePicture, licenseNumber, fontSide, backSide, status, acceptingBooking, yearExperience, rides, cost, latitude, longitude }
       setLoading(true)
       axiosRequest.post(url, Credentials)
@@ -101,6 +117,7 @@ const Leaders = () => {
             Notify(error.message, "error");
           }
         })
+    })
   }
 
   useEffect(() => {
