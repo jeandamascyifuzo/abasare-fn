@@ -114,7 +114,7 @@ const Leaders = () => {
     e.preventDefault();
     const url = "driver";
     const formData = new FormData();
-    
+
     if(uploadStatus.isProfile){
       formData.append("file", profilePicture);
     }else if(uploadStatus.isFrontSide){
@@ -124,6 +124,7 @@ const Leaders = () => {
     }else{
       return
     }
+    
     
     formData.append("upload_preset", "zayol3ca");
     setLoading(true);
