@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { FaTrash, FaEdit } from "react-icons/fa";
 import { ToastContainer } from "react-toastify";
+import DropZone from "react-dropzone";
 import axiosRequest from "../api/index";
 import Axios from "axios";
 import Notify from "../functions/Notify";
+import axios from "axios";
 
 const Leaders = () => {
   const [createTeamModel, setCreateTeamModel] = useState(false);
@@ -11,32 +13,61 @@ const Leaders = () => {
   const [updateTeamModel, setUpdateTeamModel] = useState(false);
   const [loading, setLoading] = useState(false);
   const [Data, setData] = useState([]);
+  const [uploadStatus, setUploadStatus] = useState({
+    isProfile: false,
+    isBackSide: false,
+    isFrontSide: false
+  })
 
-  const [fullName, setFullName] = useState('')
+  const profileStatus = ()=>{
+    setUploadStatus({
+      isProfile: true,
+      isBackSide: false,
+    isFrontSide: false
+    })
+  }
+  const frontSideStatus = ()=>{
+    setUploadStatus({
+      isProfile: false,
+      isFrontSide: true,
+      isBackSide: false
+    })
+  }
+  const backSideStatus = ()=>{
+    setUploadStatus({
+      isProfile: false,
+      isFrontSide: false,
+      isBackSide: true
+    })
+  }
+
+  const [fullName, setFullName] = useState("");
   // const [userType, setUserType] = useState('')
 
-  
-  const [email, setEmail] = useState('')
-  const [phoneNumber, setPhoneNumber] = useState('')
-  const [alternatePhoneNumber, setAlternatePhoneNumber] = useState('')
-  const [gender, setGender] = useState('')
-  const [licenseNumber, setLicenseNumber] = useState('')
-  const [status, setStatus] = useState('')
-  const [latitude, setLatitude] = useState('')
-  const [longitude, setLongitude] = useState('')
-  const [address, setAddress] = useState('')
-  const [cityName, setCityName] = useState('')
-  
-  const [profilePicture, setProfilePicture] = useState('')
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [alternatePhoneNumber, setAlternatePhoneNumber] = useState("");
+  const [gender, setGender] = useState("");
+  const [licenseNumber, setLicenseNumber] = useState("");
+  const [status, setStatus] = useState("");
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
+  const [address, setAddress] = useState("");
+  const [cityName, setCityName] = useState("");
 
-  const [fontSide, setFontSide] = useState('')
+  const [profilePicture, setProfilePicture] = useState({ Array: [] });
+  console.log("🚀 ~ file: Driver.js:59 ~ Leaders ~ profilePicture", profilePicture)
 
-  const [backSide, setBackSide] = useState('')
+  const [fontSide, setFontSide] = useState("");
+  console.log("🚀 ~ file: Driver.js:61 ~ Leaders ~ fontSide", fontSide)
 
-  const [acceptingBooking, setAcceptingBooking] = useState('')
-  const [yearExperience, setYearExperience] = useState('')
-  const [rides, setRides] = useState('')
-  const [cost, setCost] = useState('')
+  const [backSide, setBackSide] = useState("");
+  console.log("🚀 ~ file: Driver.js:63 ~ Leaders ~ backSide", backSide)
+
+  const [acceptingBooking, setAcceptingBooking] = useState("");
+  const [yearExperience, setYearExperience] = useState("");
+  const [rides, setRides] = useState("");
+  const [cost, setCost] = useState("");
 
   const removeModel = () => {
     let newState = !createTeamModel;
@@ -61,7 +92,7 @@ const Leaders = () => {
       .then((response) => {
         setLoading(false);
         const result = response.data;
-        console.log("<><>",result.data)
+        console.log("<><>", result.data);
         const { status, message, data } = result;
         if (status !== "SUCCESS") {
           setData(data);
@@ -80,45 +111,106 @@ const Leaders = () => {
   };
 
   const handleSubmite = (e) => {
-    e.preventDefault()
-    const url = 'driver'
-    const formData = new FormData()
-    formData.append("file", profilePicture)
-    formData.append("upload_preset", "zayol3ca")
-    setLoading(true)
-    Axios.post("https://api.cloudinary.com/v1_1/mychelon/image/upload", formData).then((response) => {
-      setLoading(false)
-      setProfilePicture(response.data.secure_url)
-      // setProfilePicture(response.data.secure_url)
-      // setProfilePicture(response.data.secure_url)
-      const protifolioImage = response.data.secure_url
-      const Credentials = { email, fullName, address, cityName, phoneNumber, alternatePhoneNumber, gender, profilePicture, licenseNumber, fontSide, backSide, status, acceptingBooking, yearExperience, rides, cost, latitude, longitude }
-      setLoading(true)
-      axiosRequest.post(url, Credentials)
-        .then(response => {
-          setLoading(false)
+    e.preventDefault();
+    const url = "driver";
+    const formData = new FormData();
+    
+    if(uploadStatus.isProfile){
+      formData.append("file", profilePicture);
+    }else if(uploadStatus.isFrontSide){
+      formData.append("file", fontSide);
+    }else if(uploadStatus.isBackSide){
+      formData.append("file", backSide);
+    }else{
+      return
+    }
+    
+    formData.append("upload_preset", "zayol3ca");
+    setLoading(true);
+    Axios.post(
+      "https://api.cloudinary.com/v1_1/mychelon/image/upload",
+      formData
+    ).then((response) => {
+      setLoading(false);
+      if(uploadStatus.isProfile){
+        setProfilePicture(response.data.secure_url);
+      }else if(uploadStatus.isFrontSide){
+        setFontSide(response.data.secure_url)
+      }else if(uploadStatus.isBackSide){
+        setBackSide(response.data.secure_url)
+      }else{
+        return
+      }
+      // const protifolioImage = response.data.secure_url;
+      const Credentials = {
+        email,
+        fullName,
+        address,
+        cityName,
+        phoneNumber,
+        alternatePhoneNumber,
+        gender,
+        profilePicture,
+        licenseNumber,
+        fontSide,
+        backSide,
+        status,
+        acceptingBooking,
+        yearExperience,
+        rides,
+        cost,
+        latitude,
+        longitude,
+      };
+      setLoading(true);
+      axiosRequest
+        .post(url, Credentials)
+        .then((response) => {
+          setLoading(false);
           const result = response.data;
           Notify(result.message, "success");
           const { status, message, data } = result;
-          if (status !== 'SUCCESS') {
+          if (status !== "SUCCESS") {
             GetDrivers();
             // setCreatePortfolioModel(false)
-          }
-          else {
-            console.log(message)
+          } else {
+            console.log(message);
           }
         })
-        .catch(error => {
-          setLoading(false)
+        .catch((error) => {
+          setLoading(false);
           if (error.code !== "ERR_NETWORK") {
             Notify(error.response.data.message, "error");
-          }
-          else {
+          } else {
             Notify(error.message, "error");
           }
-        })
-    })
-  }
+        });
+    });
+  };
+
+  // const handleDrop = (files)={
+  //    uploaders: files.map((file)=>{
+  //     const formData = new FormData();
+  //     formData.append('file',file);
+  //     formData.append('tags', 'codeinfuse, medium, gist');
+  //     formData.append('upload_preset', );
+  //     formData.append('api_key', '');
+  //     setLoading("true")
+  //     return axios
+  //             .post('', formData,{
+  //               headers:{'X-requested-With': 'XMLHttpRequest'}
+  //             })
+  //             .then((response)=>{
+  //               const data = response.data
+  //               console.log("🚀 ~ file: Driver.js:140 ~ .then ~ data", data)
+  //               const imageURL = data.secure_url
+  //               console.log("🚀 ~ file: Driver.js:142 ~ .then ~ imageURL", imageURL)
+  //             })
+  //   })
+  //   // axios.(uploaders).then(()=>{
+  //   //   setLoading("false")
+  //   // })
+  // }
 
   useEffect(() => {
     GetDrivers();
@@ -149,17 +241,17 @@ const Leaders = () => {
             <h3 className="font-bold text-sm text-center w-11/12 uppercase">
               Add a Driver
             </h3>
-            <hr className=" bg-primary border-b my-3 w-full" />
+            <hr className="bg-primary border-b my-3 w-full" />
           </div>
           <div className="card-body">
-            <form className=" py-3 px-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+            <form className=" py-3 px-8 grid grid-cols-3 md:grid-cols-2 xl:grid-cols-3">
               <div className="input my-3 h-9 md:pr-2">
                 <div className="grouped-input flex items-center h-full w-full rounded-md">
                   <input
                     type="text"
                     name="name"
                     value={fullName}
-                    onChange = {(e)=>setFullName(e.target.value)}
+                    onChange={(e) => setFullName(e.target.value)}
                     className="border border-gray-300 rounded outline-none px-2 pb-10 font-sans text-xs py-2 w-full"
                     placeholder="Full Name"
                   />
@@ -171,7 +263,7 @@ const Leaders = () => {
                     type="text"
                     name="address"
                     value={address}
-                    onChange = {(e)=> setAddress(e.target.value)}
+                    onChange={(e) => setAddress(e.target.value)}
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="Address"
                   />
@@ -183,7 +275,7 @@ const Leaders = () => {
                     type="text"
                     name="email"
                     value={email}
-                    onChange = {(e)=> setEmail(e.target.value)}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="Email: example@gmail.com"
                   />
@@ -195,7 +287,7 @@ const Leaders = () => {
                     type="text"
                     name="cityName"
                     value={cityName}
-                    onChange = {(e)=> setCityName(e.target.value)}
+                    onChange={(e) => setCityName(e.target.value)}
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="City Name"
                   />
@@ -207,7 +299,7 @@ const Leaders = () => {
                     type="number"
                     name="phoneNumber"
                     value={phoneNumber}
-                    onChange = {(e)=> setPhoneNumber(e.target.value)}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
                     className=" border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="Telephone Number"
                   />
@@ -219,7 +311,7 @@ const Leaders = () => {
                     type="number"
                     name="telephoneNumber"
                     value={alternatePhoneNumber}
-                    onChange = {(e)=> setAlternatePhoneNumber(e.target.value)}
+                    onChange={(e) => setAlternatePhoneNumber(e.target.value)}
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="Alternate Telephone Number"
                   />
@@ -231,7 +323,7 @@ const Leaders = () => {
                     type="text"
                     name="gender"
                     value={gender}
-                    onChange = {(e)=> setGender(e.target.value)}
+                    onChange={(e) => setGender(e.target.value)}
                     className="border border-gray-300 rounded outline-none px-2 pb-10 font-sans text-xs py-2 w-full"
                     placeholder="Gender"
                   />
@@ -241,7 +333,11 @@ const Leaders = () => {
                 <div className="grouped-input flex items-center h-full w-full rounded-md">
                   <input
                     type="file"
-                    name="avatar"
+                    name="ProfilePicture"
+                    onClick={profileStatus}
+                    onChange={(e) => {
+                      setProfilePicture(e.target.files[0]);
+                    }}
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="Profile Image"
                   />
@@ -253,7 +349,7 @@ const Leaders = () => {
                     type="text"
                     name="licenseNumber"
                     value={licenseNumber}
-                    onChange = {(e)=> setLicenseNumber(e.target.value)}
+                    onChange={(e) => setLicenseNumber(e.target.value)}
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="License Number"
                   />
@@ -263,7 +359,11 @@ const Leaders = () => {
                 <div className="grouped-input flex items-center h-full w-full rounded-md">
                   <input
                     type="file"
-                    name="licenseImageFont"
+                    name="backSide"
+                    onClick={backSideStatus}
+                    onChange={(e) => {
+                      setBackSide(e.target.files[0]);
+                    }}
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="FontSide of licenseImage"
                   />
@@ -273,7 +373,11 @@ const Leaders = () => {
                 <div className="grouped-input flex items-center h-full w-full rounded-md">
                   <input
                     type="file"
-                    name="licenseImageBack"
+                    name="fontSide"
+                    onClick={frontSideStatus}
+                    onChange={(e) => {
+                      setFontSide(e.target.files[0]);
+                    }}
                     className=" border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="BackSide of licenseImage"
                   />
@@ -285,7 +389,7 @@ const Leaders = () => {
                     type="text"
                     name="status"
                     value={status}
-                    onChange = {(e)=> setStatus(e.target.value)}
+                    onChange={(e) => setStatus(e.target.value)}
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="Status"
                   />
@@ -297,7 +401,7 @@ const Leaders = () => {
                     type="text"
                     name="acceptingBooking"
                     value={acceptingBooking}
-                    onChange = {(e)=> setAcceptingBooking(e.target.value)}
+                    onChange={(e) => setAcceptingBooking(e.target.value)}
                     className="border border-gray-300 rounded outline-none px-2 pb-10 font-sans text-xs py-2 w-full"
                     placeholder="Accepting Booking"
                   />
@@ -309,7 +413,7 @@ const Leaders = () => {
                     type="text"
                     name="lastLocationLatitude"
                     value={latitude}
-                    onChange = {(e)=> setLatitude(e.target.value)}
+                    onChange={(e) => setLatitude(e.target.value)}
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="last Location Latitude"
                   />
@@ -321,7 +425,7 @@ const Leaders = () => {
                     type="text"
                     name="lastLocationLongitude"
                     value={longitude}
-                    onChange = {(e)=> setLongitude(e.target.value)}
+                    onChange={(e) => setLongitude(e.target.value)}
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="Last Location Longitude"
                   />
@@ -348,14 +452,14 @@ const Leaders = () => {
                 </div>
               </div>
             </form>
-              <div className="w-full px-44 flex justify-between">
-                <button
-                  className="py-2 mr-4 w-[40%] md:w-44 bg-gray-300 rounded border border-gray-800 font-sans text-sm text-gray-900"
-                  onClick={(e) => removeModel(e.preventDefault())}
-                >
-                  Cancel
-                </button>
-                {/* {loading ? (
+            <div className="w-full px-44 flex justify-between">
+              <button
+                className="py-2 mr-4 w-[40%] md:w-44 bg-gray-300 rounded border border-gray-800 font-sans text-sm text-gray-900"
+                onClick={(e) => removeModel(e.preventDefault())}
+              >
+                Cancel
+              </button>
+              {/* {loading ? (
                   <Button variant="dark" disabled className="w-[40%] md:w-1/2">
                     <Spinner
                       as="span"
@@ -368,14 +472,14 @@ const Leaders = () => {
                     Processing...
                   </Button>
                 ) : ( */}
-                <button
-                  className="py-2 w-[40%] md:w-44 rounded  bg-[#2563eb] border border-gray-800 text-white focus:ring-4 focus:outline-none"
-                  onClick={handleSubmite}
-                >
-                  Save
-                </button>
-                {/* )} */}
-              </div>
+              <button
+                className="py-2 w-[40%] md:w-44 rounded  bg-[#2563eb] border border-gray-800 text-white focus:ring-4 focus:outline-none"
+                onClick={handleSubmite}
+              >
+                Save
+              </button>
+              {/* )} */}
+            </div>
           </div>
         </div>
       </div>
@@ -546,6 +650,21 @@ const Leaders = () => {
       </div>
       {/* =========================== End::  updateTeamModel =============================== */}
 
+      {/* <DropZone
+      className="dropzone"
+      onDrop={handleDrop}
+      onChange={(e)=> setProfilePicture(e.target.value)}
+      value={profilePicture}>
+        {({getRootProps, getInputProps})=>(
+          <section>
+            <div {...getRootProps({className:"dropzone"})}>
+              <span>^</span>
+              <p>drop image</p>
+            </div>
+          </section>
+        )}
+      </DropZone> */}
+
       <div
         className="overflow-x-auto bg-gray-900 pb-10 min-h-screen lg:ml-44 px-2 lg:px-10"
         id="contact-section"
@@ -634,127 +753,127 @@ const Leaders = () => {
                     <tbody>
                       {Data.map((item) => (
                         <tr key={item._d}>
-                        <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                          <img
-                            className="w-10 h-10 rounded-full shadow-lg object-cover"
-                            src={item.profilePicture}
-                            alt="Bonnie"
-                          />
-                        </td>
-                        <td className="p-3 border-b border-gray-200 text-sm">
-                          <div className="flex items-center">
-                            <div>
-                              <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                                {item.fullName}
-                              </p>
+                          <td className="px-5 py-3 border-b border-gray-200 text-sm">
+                            <img
+                              className="w-10 h-10 rounded-full shadow-lg object-cover"
+                              src={item.profilePicture}
+                              alt="Bonnie"
+                            />
+                          </td>
+                          <td className="p-3 border-b border-gray-200 text-sm">
+                            <div className="flex items-center">
+                              <div>
+                                <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                                  {item.fullName}
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            email
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            {item.phoneNumber}
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            {item.alternatePhoneNumber}
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            {item.gender}
-                          </p>
-                        </td>
+                          </td>
+                          <td className="px-5 py-3 border-b border-gray-200 text-sm">
+                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                              email
+                            </p>
+                          </td>
+                          <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                              {item.phoneNumber}
+                            </p>
+                          </td>
+                          <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                              {item.alternatePhoneNumber}
+                            </p>
+                          </td>
+                          <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                              {item.gender}
+                            </p>
+                          </td>
 
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            {item.licenseNumber}
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            fontside licenseImage
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            backside licenseImage
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            {item.status}
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            true
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            latitude
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            longitude
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                            lastLocationUpdatedAt
-                          </p>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                          <div className="flex items-center">
-                            <div>
-                              <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                                300
-                              </p>
+                          <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                              {item.licenseNumber}
+                            </p>
+                          </td>
+                          <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                              fontside licenseImage
+                            </p>
+                          </td>
+                          <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                              backside licenseImage
+                            </p>
+                          </td>
+                          <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                              {item.status}
+                            </p>
+                          </td>
+                          <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                              true
+                            </p>
+                          </td>
+                          <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                              latitude
+                            </p>
+                          </td>
+                          <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                              longitude
+                            </p>
+                          </td>
+                          <td className="px-5 py-3 border-b border-gray-200  text-sm">
+                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                              lastLocationUpdatedAt
+                            </p>
+                          </td>
+                          <td className="px-5 py-3 border-b border-gray-200 text-sm">
+                            <div className="flex items-center">
+                              <div>
+                                <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                                  300
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                          <div className="flex items-center">
-                            <div>
-                              <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                                {item.address}
-                              </p>
+                          </td>
+                          <td className="px-5 py-3 border-b border-gray-200 text-sm">
+                            <div className="flex items-center">
+                              <div>
+                                <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                                  {item.address}
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                          <div className="flex items-center">
-                            <div>
-                              <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                                {item.cityName}
-                              </p>
+                          </td>
+                          <td className="px-5 py-3 border-b border-gray-200 text-sm">
+                            <div className="flex items-center">
+                              <div>
+                                <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
+                                  {item.cityName}
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        </td>
-                        <td className="px-5 py-3 border-b border-gray-200 text-gray-500 cursor-pointer text-lg">
-                          <div className="flex">
-                            <div
-                              className="cursor-pointer mr-2 text-gray-500"
-                              onClick={() => updateMemberModel()}
-                            >
-                              <FaEdit />
+                          </td>
+                          <td className="px-5 py-3 border-b border-gray-200 text-gray-500 cursor-pointer text-lg">
+                            <div className="flex">
+                              <div
+                                className="cursor-pointer mr-2 text-gray-500"
+                                onClick={() => updateMemberModel()}
+                              >
+                                <FaEdit />
+                              </div>
+                              <div
+                                className="cursor-pointer text-[#FF3D3D]"
+                                onClick={() => removeDeleteModel()}
+                              >
+                                <FaTrash />
+                              </div>
                             </div>
-                            <div
-                              className="cursor-pointer text-[#FF3D3D]"
-                              onClick={() => removeDeleteModel()}
-                            >
-                              <FaTrash />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
+                          </td>
+                        </tr>
                       ))}
 
                       {/* <tr>
