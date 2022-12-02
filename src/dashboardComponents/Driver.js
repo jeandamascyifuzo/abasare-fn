@@ -55,8 +55,8 @@ const Leaders = () => {
   const [address, setAddress] = useState("");
   const [cityName, setCityName] = useState("");
 
-  const [profilePicture, setProfilePicture] = useState({ Array: [] });
-  console.log("🚀 ~ file: Driver.js:59 ~ Leaders ~ profilePicture", profilePicture)
+  const [avatar, setAvatar] = useState({ Array: [] });
+  console.log("🚀 ~ file: Driver.js:59 ~ Leaders ~ profilePicture", avatar)
 
   const [fontSide, setFontSide] = useState("");
   console.log("🚀 ~ file: Driver.js:61 ~ Leaders ~ fontSide", fontSide)
@@ -114,9 +114,9 @@ const Leaders = () => {
     e.preventDefault();
     const url = "driver";
     const formData = new FormData();
-    
+
     if(uploadStatus.isProfile){
-      formData.append("file", profilePicture);
+      formData.append("file", avatar);
     }else if(uploadStatus.isFrontSide){
       formData.append("file", fontSide);
     }else if(uploadStatus.isBackSide){
@@ -125,15 +125,16 @@ const Leaders = () => {
       return
     }
     
-    formData.append("upload_preset", "zayol3ca");
+    
+    formData.append("upload_preset", "f27dmwgz");
     setLoading(true);
     Axios.post(
-      "https://api.cloudinary.com/v1_1/mychelon/image/upload",
+      "https://api.cloudinary.com/v1_1/andela-rwanda-kigali/image/upload",
       formData
     ).then((response) => {
       setLoading(false);
       if(uploadStatus.isProfile){
-        setProfilePicture(response.data.secure_url);
+        setAvatar(response.data.secure_url);
       }else if(uploadStatus.isFrontSide){
         setFontSide(response.data.secure_url)
       }else if(uploadStatus.isBackSide){
@@ -150,7 +151,7 @@ const Leaders = () => {
         phoneNumber,
         alternatePhoneNumber,
         gender,
-        profilePicture,
+        avatar,
         licenseNumber,
         fontSide,
         backSide,
@@ -333,10 +334,10 @@ const Leaders = () => {
                 <div className="grouped-input flex items-center h-full w-full rounded-md">
                   <input
                     type="file"
-                    name="ProfilePicture"
+                    name="avatar"
                     onClick={profileStatus}
                     onChange={(e) => {
-                      setProfilePicture(e.target.files[0]);
+                      setAvatar(e.target.files[0]);
                     }}
                     className="border border-gray-300 py-2 pb-10 rounded outline-none px-2 font-sans text-xs w-full"
                     placeholder="Profile Image"

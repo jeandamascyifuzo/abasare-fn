@@ -23,7 +23,7 @@ const DashboardHeader = () => {
     }
 
     return (
-        <div className="w-screen h-[8vh] z-10  bg-[#2563eb] fixed border-b">
+        <div className="w-screen h-[8vh] z-10 mb-44 bg-[#2563eb] fixed border-b">
             <div className="px-3 flex items-center w-full h-full justify-between">
                 <div className='h-10 w-10 pt-2.5 text-white lg:hidden'
                     onClick={handleClick}
