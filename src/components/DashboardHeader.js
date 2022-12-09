@@ -30,19 +30,17 @@ const DashboardHeader = () => {
                 >
                     {!menu ? <HiMenu /> : <HiOutlineX />}
                 </div>
-                <div className="flex items-center">
+                <div className="flex ml-10 items-center">
                     <img src="https://cdn.pixabay.com/photo/2015/01/05/11/02/wordpress-589121__480.jpg" alt="logo"
                         className='absolute ml-[40%] rounded-full object-cover md:ml-[50%] lg:ml-6 h-6 w-6 sm:h-10 sm:w-10 mr-2' />
                     <span className="self-center text-xl font-semibold whitespace-nowrap text-white"></span>
                 </div>
-                <div className="flex items-center justify-center h-full lg:w-full">
-                    <div className="relative">
+                <div className="flex items-center justify-center h-full lg:w-full py-10">
                         <h1 className="hidden lg:flex text-center lg:ml-8 lg:mt-2 text-white" >Hi UserName</h1>
                         <h1 className="hidden lg:flex text-center lg:ml-8 lg:mt-2 text-white" >Welcome Back</h1>
-                    </div>
                 </div>
                 <img
-                    className="h-10 w-10 rounded-full cursor-pointer bg-gray-200 border-2 border-blue-400 object-cover"
+                    className="h-10 w-10 rounded-full cursor-pointer bg-gray-200 border-2 border-blue-400 object-cover mr-16"
                     src="https://cdn.pixabay.com/photo/2019/03/21/20/29/eyewear-4071870__480.jpg"
                     alt="avatar"
                     onClick={handleDropDown}
