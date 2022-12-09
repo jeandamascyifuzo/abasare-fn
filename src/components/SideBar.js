@@ -7,7 +7,7 @@ const SideBar = ({ style }) => {
         <div
             className={`${style} flex-col fixed h-[100%] mt-[2px] xl:mt-[8vh] left-0 bg-[#191919] border-r px-4 pt-4`}
         >
-            <div className="list-none pr-8">
+            <div className="list-none pr-8 mt-10">
                 <li className="mb-4 hover:text-primary">
                     <NavLink
                         to="driver"
