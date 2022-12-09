@@ -226,7 +226,7 @@ const Leaders = () => {
       >
         <div className="bg-white w-screen sm:w-3/4 md:w-3/4  xl:w-full rounded-lg p-4 pb-8">
           <div className="card-title w-full flex  flex-wrap justify-center items-center  ">
-            <h3 className="font-bold text-sm text-center uppercase">
+            <h3 className="font-semibold text-sm text-center uppercase text-gray-900">
               Add a Driver
             </h3>
             <hr className="bg-primary border-b my-3 w-full" />
@@ -818,14 +818,14 @@ const Leaders = () => {
                           </td>
                           <td className="px-5 border-b border-gray-200  text-sm">
                             <img
-                              className="rounded-full h-10 w-10"
+                              className="rounded-full h-10 w-10 object-cover"
                               src={item.licenseImage[0].fontSide}
                               alt="images"
                             />
                           </td>
                           <td className="px-5 border-b border-gray-200  text-sm">
                             <img
-                              className="rounded-full h-10 w-10"
+                              className="rounded-full h-10 w-10 object-cover"
                               src={item.licenseImage[0].backSide}
                               alt="images"
                             />

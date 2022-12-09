@@ -7,7 +7,7 @@ import Driver from '../dashboardComponents/Driver';
 const DashRoute = () => {
   return (
     <>
-      <div className='flex flex-col min-h-screen bg-black'>
+      <div className='flex flex-col min-h-screen bg-gray-900'>
         <DashboardHeader />
         <SideBar style="hidden lg:flex" />
         <Routes>
