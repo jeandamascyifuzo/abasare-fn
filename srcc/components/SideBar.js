@@ -5,7 +5,7 @@ import { HiOutlineShoppingCart, HiCog } from "react-icons/hi"
 const SideBar = ({ style }) => {
     return (
         <div
-            className={`${style} flex-col fixed mt-[2px] h-[100vh] xl:mt-20 left-0 bg-[#38434e] px-4 pt-6`}>
+            className={`${style} flex-col fixed mt-[2px] h-[100vh] xl:mt-20 left-0 bg-[#ff4747] px-4 pt-6`}>
             <div className="list-none pr-8">
                 <li className="mb-4 hover:text-primary">
                     <a

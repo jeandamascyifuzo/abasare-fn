@@ -104,7 +104,6 @@ const Leaders = () => {
       .then((response) => {
         setLoading(false);
         const result = response.data;
-        console.log("<><>", result.data);
         const { status, message, data } = result;
         if (status !== "SUCCESS") {
           setData(data);
@@ -343,22 +342,6 @@ const Leaders = () => {
                   for="first_name"
                   class="block mb-2 text-sm font-medium text-gray-900"
                 >
-                  Profile Image
-                </label>
-                <input
-                  type="file"
-                  onClick={profileStatus}
-                  onChange={(e) =>
-                    setCdata({ ...cdata, avatarImage: e.target.files[0] })
-                  }
-                  className="border border-gray-300 text-sm rounded w-full p-2.5"
-                />
-              </div>
-              <div className="md:pr-2">
-                <label
-                  for="first_name"
-                  class="block mb-2 text-sm font-medium text-gray-900"
-                >
                   License Number
                 </label>
                 <input
@@ -367,38 +350,6 @@ const Leaders = () => {
                   onChange={(e) => setLicenseNumber(e.target.value)}
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
                   placeholder="123ewd3456"
-                />
-              </div>
-              <div className="md:pr-2">
-                <label
-                  for="first_name"
-                  class="block mb-2 text-sm font-medium text-gray-900"
-                >
-                  BackSide of licenseImage
-                </label>
-                <input
-                  type="file"
-                  onClick={backSideStatus}
-                  onChange={(e) => {
-                    setCdata({ ...cdata, backSideImage: e.target.files[0] });
-                  }}
-                  className="border border-gray-300 text-sm rounded w-full p-2.5"
-                />
-              </div>
-              <div className="md:pr-2">
-                <label
-                  for="first_name"
-                  class="block mb-2 text-sm font-medium text-gray-900"
-                >
-                  FrontSide of licenseImage
-                </label>
-                <input
-                  type="file"
-                  onClick={frontSideStatus}
-                  onChange={(e) => {
-                    setCdata({ ...cdata, fontSideImage: e.target.files[0] });
-                  }}
-                  className="border border-gray-300 text-sm rounded w-full p-2.5"
                 />
               </div>
               <div className="md:pr-2">
@@ -487,6 +438,55 @@ const Leaders = () => {
                   placeholder="90000"
                 />
               </div>
+              
+              <div className="md:pr-2">
+                <label
+                  for="first_name"
+                  class="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Profile Image
+                </label>
+                <input
+                  type="file"
+                  onClick={profileStatus}
+                  onChange={(e) =>
+                    setCdata({ ...cdata, avatarImage: e.target.files[0] })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                />
+              </div>
+              <div className="md:pr-2">
+                <label
+                  for="first_name"
+                  class="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  BackSide of licenseImage
+                </label>
+                <input
+                  type="file"
+                  onClick={backSideStatus}
+                  onChange={(e) => {
+                    setCdata({ ...cdata, backSideImage: e.target.files[0] });
+                  }}
+                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                />
+              </div>
+              <div className="md:pr-2">
+                <label
+                  for="first_name"
+                  class="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  FrontSide of licenseImage
+                </label>
+                <input
+                  type="file"
+                  onClick={frontSideStatus}
+                  onChange={(e) => {
+                    setCdata({ ...cdata, fontSideImage: e.target.files[0] });
+                  }}
+                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                />
+              </div>
             </form>
             <div className="w-full px-44 flex justify-between">
               <button
@@ -521,7 +521,7 @@ const Leaders = () => {
       </div>
       {/* =========================== End::  CreateDriverModel =============================== */}
 
-      {/* =========================== Start::  deleteTeamModel =============================== */}
+      {/* =========================== Start::  deleteDriverModel =============================== */}
       <div
         className={`min-h-full w-screen z-30 bg-gray-500 bg-opacity-30 backdrop-blur-sm fixed flex items-center justify-center px-4 ${
           deleteTeamModel === true ? "block" : "hidden"
@@ -575,9 +575,9 @@ const Leaders = () => {
           </div>
         </div>
       </div>
-      {/* =========================== End::  deleteTeamModel =============================== */}
+      {/* =========================== End::  deleteDriverModel =============================== */}
 
-      {/* =========================== Start::  updateTeamModel =============================== */}
+      {/* =========================== Start::  updateDriverModel =============================== */}
       <div
         className={`min-h-full w-screen z-30 bg-gray-500 bg-opacity-30 backdrop-blur-sm fixed flex items-center justify-center px-4 ${
           updateTeamModel === true ? "block" : "hidden"
@@ -684,7 +684,7 @@ const Leaders = () => {
           </div>
         </div>
       </div>
-      {/* =========================== End::  updateTeamModel =============================== */}
+      {/* =========================== End::  updateDriverModel =============================== */}
 
       <div
         className="overflow-x-auto bg-gray-900 pb-10 min-h-screen lg:ml-44 px-2 lg:px-10"
