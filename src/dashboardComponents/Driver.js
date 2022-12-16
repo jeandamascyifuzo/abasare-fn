@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { FaTrash, FaEdit } from "react-icons/fa";
+import { useDropzone } from "react-dropzone";
 import { ToastContainer } from "react-toastify";
-import DropZone from "react-dropzone";
 import axiosRequest from "../api/index";
-import Axios from "axios";
+import { Icon } from "@iconify/react";
 import Notify from "../functions/Notify";
 import axios from "axios";
 
-const Leaders = () => {
+const Leaders = (props) => {
+  let temporaryType;
   const [createTeamModel, setCreateTeamModel] = useState(false);
   const [deleteTeamModel, setDeleteTeamModel] = useState(false);
   const [updateTeamModel, setUpdateTeamModel] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [RowData, SetRowData] = useState([])
+  const [Delete, setDelete] = useState(false)
+  const [id, setId] = useState("");
   const [Data, setData] = useState([]);
   const [uploadStatus, setUploadStatus] = useState({
     isProfile: false,
@@ -19,67 +23,147 @@ const Leaders = () => {
     isFrontSide: false,
   });
 
-  const profileStatus = () => {
-    setUploadStatus({
-      isProfile: true,
-      isBackSide: false,
-      isFrontSide: false,
-    });
-  };
-  const frontSideStatus = () => {
-    setUploadStatus({
-      isProfile: false,
-      isFrontSide: true,
-      isBackSide: false,
-    });
-  };
-  const backSideStatus = () => {
-    setUploadStatus({
-      isProfile: false,
-      isFrontSide: false,
-      isBackSide: true,
-    });
-  };
-
-  const [fullName, setFullName] = useState("");
-  // const [userType, setUserType] = useState('')
-
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [alternatePhoneNumber, setAlternatePhoneNumber] = useState("");
-  const [gender, setGender] = useState("");
-  const [licenseNumber, setLicenseNumber] = useState("");
-  const [status, setStatus] = useState("");
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
-  const [address, setAddress] = useState("");
-  const [cityName, setCityName] = useState("");
-
-  const [images, setImages] = useState({
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phoneNumber: "",
+    alternatePhoneNumber: "",
+    gender: "",
+    licenseNumber: "",
+    status: "",
+    latitude: "",
+    longitude: "",
+    address: "",
+    cityName: "",
+    acceptingBooking: "",
+    yearExperience: "",
+    rides: "",
+    cost: "",
     avatar: "",
     fontSide: "",
     backSide: "",
   });
-  const [cdata, setCdata] = useState({
-    avatarImage: "",
-    fontSideImage: "",
-    backSideImage: "",
+
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: "image/jpeg, image/png, image/jpg",
+    onDrop: (acceptedFiles) => {
+      console.log(acceptedFiles);
+      const renamedAcceptedFiles = acceptedFiles.map(
+        (file) =>
+          new File([file], `${file.name}_${+new Date()}`, {
+            type: file.type,
+          })
+      );
+      const newFile = renamedAcceptedFiles.map((file) =>
+        Object.assign(file, {
+          preview: URL.createObjectURL(file),
+        })
+      );
+      // setProfile(newFile[0].preview);
+      const formDataUpload = new FormData();
+      formDataUpload.append("file", newFile[0]);
+      formDataUpload.append("upload_preset", "f27dmwgz");
+
+      console.log("temporaryType", temporaryType);
+
+      setLoading(true);
+      axios
+        .post(
+          "https://api.cloudinary.com/v1_1/andela-rwanda-kigali/image/upload",
+          formDataUpload
+        )
+        .then((response) => {
+          console.log(response.data.secure_url);
+
+          switch (temporaryType) {
+            case "avatar":
+              formData.avatar = response.data.secure_url;
+              break;
+            case "fontSide":
+              formData.fontSide = response.data.secure_url;
+              break;
+            case "backSide":
+              formData.backSide = response.data.secure_url;
+              break;
+            default:
+              formData = formData;
+          }
+          // let avatarImage = formData.avatar
+          console.log("Final FormData", formData.avatar);
+          setLoading(false);
+        });
+    },
   });
-  console.log("cdata", cdata);
 
-  console.log("images", images);
-  // console.log("🚀 ~ file: Driver.js:61 ~ Leaders ~ avatar", avatar)
+  const handleSubmite = async (event) => {
+    event.preventDefault();
+    const url = "driver";
+    console.log("formData", formData);
+    setLoading(true);
+    await axiosRequest.post(url, formData).then((res) => {
+      console.log("<><><><><><>><<>>", res.data);
+      setFormData({
+        fullName: "",
+        email: "",
+        phoneNumber: "",
+        alternatePhoneNumber: "",
+        gender: "",
+        licenseNumber: "",
+        status: "",
+        latitude: "",
+        longitude: "",
+        address: "",
+        cityName: "",
+        acceptingBooking: "",
+        yearExperience: "",
+        rides: "",
+        cost: "",
+        avatar: "",
+        fontSide: "",
+        backSide: "",
+      });
+      setLoading(false);
+      const { status, message } = res;
+      if (status !== 'SUCCESS') {
+        GetDrivers();
+        setCreateTeamModel(false)
+      }
+      else {
+        console.log(message)
+      }
+    });
 
-  // const [fontSide, setFontSide] = useState('');
-  // console.log("🚀 ~ file: Driver.js:63 ~ Leaders ~ fontSide", fontSide)
+    console.log("UploadResult ", props.uploadFile);
+  };
 
-  // const [backSide, setBackSide] = useState('');
-  // console.log("🚀 ~ file: Driver.js:65 ~ Leaders ~ backSide", backSide)
-
-  const [acceptingBooking, setAcceptingBooking] = useState("");
-  const [yearExperience, setYearExperience] = useState("");
-  const [rides, setRides] = useState("");
-  const [cost, setCost] = useState("");
+  const handleDelete = (e) => {
+    e.preventDefault()
+    const url = `drivers/profile/${id}`
+    setLoading(true)
+    axiosRequest.delete(url)
+      .then(response => {
+        setLoading(false)
+        const result = response.data;
+        // Notify(result.message, "success");
+        const { status, message } = result;
+        if (status !== 'SUCCESS') {
+          GetDrivers();
+          setDeleteTeamModel(false)
+        }
+        else {
+          console.log(message)
+        }
+      })
+      .catch(error => {
+        setLoading(false)
+        if (error.code !== "ERR_NETWORK") {
+          // Notify(error.response.data.message, "error");
+        }
+        else {
+          // Notify(error.message, "error");
+        }
+      })
+  }
 
   const removeModel = () => {
     let newState = !createTeamModel;
@@ -121,84 +205,6 @@ const Leaders = () => {
       });
   };
 
-  const handleSubmite = (e) => {
-    e.preventDefault();
-    const url = "driver";
-    const formData = new FormData();
-
-    if (uploadStatus.isProfile) {
-      formData.append("file", cdata.avatarImage);
-    } else if (uploadStatus.isFrontSide) {
-      formData.append("file", cdata.fontSideImage);
-    } else if (uploadStatus.isBackSide) {
-      formData.append("file", cdata.backSideImage);
-    } else {
-      return;
-    }
-
-    formData.append("upload_preset", "f27dmwgz");
-    setLoading(true);
-    Axios.post(
-      "https://api.cloudinary.com/v1_1/andela-rwanda-kigali/image/upload",
-      formData
-    ).then((response) => {
-      console.log("response", response);
-      setLoading(false);
-      if (uploadStatus.isProfile) {
-        setImages({ ...images, avatar: response.data.secure_url });
-      } else if (uploadStatus.isFrontSide) {
-        setImages({ ...images, fontSide: response.data.secure_url });
-      } else if (uploadStatus.isBackSide) {
-        setImages({ ...images, backSide: response.data.secure_url });
-      } else {
-        return;
-      }
-      const Credentials = {
-        email: email,
-        fullName: fullName,
-        address: address,
-        cityName: cityName,
-        phoneNumber: phoneNumber,
-        alternatePhoneNumber: alternatePhoneNumber,
-        gender: gender,
-        avatar: images.avatar,
-        licenseNumber: licenseNumber,
-        fontSide: images.fontSide,
-        backSide: images.backSide,
-        status: status,
-        acceptingBooking: acceptingBooking,
-        yearExperience: yearExperience,
-        rides: rides,
-        cost: cost,
-        latitude: latitude,
-        longitude: longitude,
-      };
-      setLoading(true);
-      axiosRequest
-        .post(url, Credentials)
-        .then((response) => {
-          setLoading(false);
-          const result = response.data;
-
-          Notify(result.message, "success");
-          const { status, message, data } = result;
-          if (status !== "SUCCESS") {
-            GetDrivers();
-          } else {
-            console.log(message);
-          }
-        })
-        .catch((error) => {
-          setLoading(false);
-          if (error.code !== "ERR_NETWORK") {
-            Notify(error.response.data.message, "error");
-          } else {
-            Notify(error.message, "error");
-          }
-        });
-    });
-  };
-
   useEffect(() => {
     GetDrivers();
   }, []);
@@ -219,11 +225,11 @@ const Leaders = () => {
 
       {/* =========================== Start:: CreateDriverModel =============================== */}
       <div
-        className={`h-screen w-full bg-gray-600 bg-opacity-30 backdrop-blur-sm mt-[90%] lg:mt-12 absolute flex items-center justify-center px-4 ${
+        className={`h-screen w-full bg-gray-600 bg-opacity-30 backdrop-blur-sm mt-[15%] md:mt-0 absolute md:fixed z-10 flex items-center justify-center md:px-4 ${
           createTeamModel === true ? "block" : "hidden"
         }`}
       >
-        <div className="bg-white w-screen sm:w-3/4 md:w-3/4  xl:w-full rounded-lg p-4 pb-8">
+        <div className="bg-white w-full sm:w-3/4 md:w-full m-auto xl:w-full rounded-lg md:p-4 py-8">
           <div className="card-title w-full flex  flex-wrap justify-center items-center  ">
             <h3 className="font-semibold text-sm text-center uppercase text-gray-900">
               Add a Driver
@@ -231,7 +237,10 @@ const Leaders = () => {
             <hr className="bg-primary border-b my-3 w-full" />
           </div>
           <div className="card-body">
-            <form className=" py-3 px-8 grid grid-cols-1 md:grid-cols-3 xl:grid-cols-3">
+            <form
+              className=" py-3 px-8 grid grid-cols-1 md:grid-cols-4 xl:grid-cols-3"
+              // onSubmit={handleSubmite}
+            >
               <div className="md:pr-2">
                 <label
                   for="first_name"
@@ -241,10 +250,16 @@ const Leaders = () => {
                 </label>
                 <input
                   type="text"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
+                  value={formData.fullName}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      fullName: e.target.value,
+                    })
+                  }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
                   placeholder="John deo"
+                  required
                 />
               </div>
               <div className="md:pr-2">
@@ -256,10 +271,16 @@ const Leaders = () => {
                 </label>
                 <input
                   type="text"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
+                  value={formData.address}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      address: e.target.value,
+                    })
+                  }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
                   placeholder="kigali gasabo"
+                  required
                 />
               </div>
               <div className="md:pr-2">
@@ -271,8 +292,13 @@ const Leaders = () => {
                 </label>
                 <input
                   type="text"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      email: e.target.value,
+                    })
+                  }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
                   placeholder="example@gmail.com"
                 />
@@ -286,8 +312,13 @@ const Leaders = () => {
                 </label>
                 <input
                   type="text"
-                  value={cityName}
-                  onChange={(e) => setCityName(e.target.value)}
+                  value={formData.cityName}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      cityName: e.target.value,
+                    })
+                  }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
                   placeholder="kabeza"
                 />
@@ -301,8 +332,13 @@ const Leaders = () => {
                 </label>
                 <input
                   type="Number"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  value={formData.phoneNumber}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      phoneNumber: e.target.value,
+                    })
+                  }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
                   placeholder="0788788765"
                 />
@@ -316,8 +352,13 @@ const Leaders = () => {
                 </label>
                 <input
                   type="Number"
-                  value={alternatePhoneNumber}
-                  onChange={(e) => setAlternatePhoneNumber(e.target.value)}
+                  value={formData.alternatePhoneNumber}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      alternatePhoneNumber: e.target.value,
+                    })
+                  }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
                   placeholder="0730788765"
                 />
@@ -331,8 +372,13 @@ const Leaders = () => {
                 </label>
                 <input
                   type="text"
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value)}
+                  value={formData.gender}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      gender: e.target.value,
+                    })
+                  }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
                   placeholder="Male"
                 />
@@ -346,8 +392,13 @@ const Leaders = () => {
                 </label>
                 <input
                   type="text"
-                  value={licenseNumber}
-                  onChange={(e) => setLicenseNumber(e.target.value)}
+                  value={formData.licenseNumber}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      licenseNumber: e.target.value,
+                    })
+                  }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
                   placeholder="123ewd3456"
                 />
@@ -361,8 +412,13 @@ const Leaders = () => {
                 </label>
                 <input
                   type="text"
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
+                  value={formData.status}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      status: e.target.value,
+                    })
+                  }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
                   placeholder="Active"
                 />
@@ -376,8 +432,13 @@ const Leaders = () => {
                 </label>
                 <input
                   type="text"
-                  value={acceptingBooking}
-                  onChange={(e) => setAcceptingBooking(e.target.value)}
+                  value={formData.acceptingBooking}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      acceptingBooking: e.target.value,
+                    })
+                  }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
                   placeholder="false"
                 />
@@ -391,8 +452,13 @@ const Leaders = () => {
                 </label>
                 <input
                   type="number"
-                  value={latitude}
-                  onChange={(e) => setLatitude(e.target.value)}
+                  value={formData.latitude}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      latitude: e.target.value,
+                    })
+                  }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
                   placeholder="0.09876787"
                 />
@@ -406,12 +472,18 @@ const Leaders = () => {
                 </label>
                 <input
                   type="number"
-                  value={longitude}
-                  onChange={(e) => setLongitude(e.target.value)}
+                  value={formData.longitude}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      longitude: e.target.value,
+                    })
+                  }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
                   placeholder="0.09876787"
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
                   for="first_name"
@@ -421,6 +493,13 @@ const Leaders = () => {
                 </label>
                 <input
                   type="text"
+                  value={formData.longitude}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      longitude: e.target.value,
+                    })
+                  }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
                   placeholder="0.09876787"
                 />
@@ -434,61 +513,120 @@ const Leaders = () => {
                 </label>
                 <input
                   type="number"
+                  value={formData.longitude}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      longitude: e.target.value,
+                    })
+                  }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
                   placeholder="90000"
                 />
               </div>
-              
-              <div className="md:pr-2">
-                <label
-                  for="first_name"
-                  class="block mb-2 text-sm font-medium text-gray-900"
-                >
-                  Profile Image
-                </label>
-                <input
-                  type="file"
-                  onClick={profileStatus}
-                  onChange={(e) =>
-                    setCdata({ ...cdata, avatarImage: e.target.files[0] })
-                  }
-                  className="border border-gray-300 text-sm rounded w-full p-2.5"
-                />
+
+              <div onClick={() => (temporaryType = "avatar")}>
+                <div>
+                  <label
+                    for="first_image"
+                    htmlFor="first_image"
+                    class="block mb-2 text-sm font-medium text-gray-900"
+                  >
+                    Profile Photos
+                    {loading ? (
+                      <Icon
+                        icon="eos-icons:bubble-loading"
+                        color="blue"
+                        className="w-6 h-6"
+                      />
+                    ) : (
+                      <img
+                        className="h-16 w-14 object-cover"
+                        htmlFor="first_image"
+                        src={
+                          formData.avatar
+                            ? formData.avatar
+                            : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-vfpa4YGU7dPzQuRdnelFVO2mJ0UTznsB7g&usqp=CAU"
+                        }
+                      />
+                    )}
+                  </label>
+                  <input
+                    {...getRootProps()}
+                    className="hidden"
+                    id="first_image"
+                  />
+                </div>
               </div>
-              <div className="md:pr-2">
-                <label
-                  for="first_name"
-                  class="block mb-2 text-sm font-medium text-gray-900"
-                >
-                  BackSide of licenseImage
-                </label>
-                <input
-                  type="file"
-                  onClick={backSideStatus}
-                  onChange={(e) => {
-                    setCdata({ ...cdata, backSideImage: e.target.files[0] });
-                  }}
-                  className="border border-gray-300 text-sm rounded w-full p-2.5"
-                />
+
+              <div onClick={() => (temporaryType = "fontSide")}>
+                <div>
+                  <label
+                    for="second_image"
+                    htmlFor="second_image"
+                    class="block mb-2 text-sm font-medium text-gray-900"
+                  >
+                    Profile Photos
+                    {loading ? (
+                      <Icon
+                        icon="eos-icons:bubble-loading"
+                        color="blue"
+                        className="w-6 h-6"
+                      />
+                    ) : (
+                      <img
+                        className="h-16 w-14 object-cover"
+                        htmlFor="second_image"
+                        src={
+                          formData.fontSide
+                            ? formData.fontSide
+                            : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-vfpa4YGU7dPzQuRdnelFVO2mJ0UTznsB7g&usqp=CAU"
+                        }
+                      />
+                    )}
+                  </label>
+                  <input
+                    {...getRootProps()}
+                    className="hidden"
+                    id="second_image"
+                  />
+                </div>
               </div>
-              <div className="md:pr-2">
-                <label
-                  for="first_name"
-                  class="block mb-2 text-sm font-medium text-gray-900"
-                >
-                  FrontSide of licenseImage
-                </label>
-                <input
-                  type="file"
-                  onClick={frontSideStatus}
-                  onChange={(e) => {
-                    setCdata({ ...cdata, fontSideImage: e.target.files[0] });
-                  }}
-                  className="border border-gray-300 text-sm rounded w-full p-2.5"
-                />
+              <div onClick={() => (temporaryType = "backSide")}>
+                <div>
+                  <label
+                    for="last_image"
+                    htmlFor="last_image"
+                    class="block mb-2 text-sm font-medium text-gray-900"
+                  >
+                    Profile Photos
+                    {loading ? (
+                      <Icon
+                        icon="eos-icons:bubble-loading"
+                        color="blue"
+                        className="w-6 h-6"
+                      />
+                    ) : (
+                      <img
+                        className="h-16 w-14 object-cover"
+                        htmlFor="last_image"
+                        src={
+                          formData.backSide
+                            ? formData.backSide
+                            : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-vfpa4YGU7dPzQuRdnelFVO2mJ0UTznsB7g&usqp=CAU"
+                        }
+                      />
+                    )}
+                  </label>
+                  <input
+                    {...getRootProps()}
+                    className="hidden"
+                    id="last_image"
+                  />
+                </div>
               </div>
             </form>
-            <div className="w-full px-44 flex justify-between">
+            <div className="w-full px-8 pt-6 md:pt-0 md:px-44 flex justify-between">
               <button
                 className="py-2 mr-4 w-[40%] md:w-44 bg-gray-300 rounded border border-gray-800 font-sans text-sm text-gray-900"
                 onClick={(e) => removeModel(e.preventDefault())}
@@ -509,6 +647,7 @@ const Leaders = () => {
                   </Button>
                 ) : ( */}
               <button
+                type="submit"
                 className="py-2 w-[40%] md:w-44 rounded  bg-[#2563eb] border border-gray-800 text-white focus:ring-4 focus:outline-none"
                 onClick={handleSubmite}
               >
@@ -565,7 +704,7 @@ const Leaders = () => {
                 ) : ( */}
                 <button
                   className="text-white py-2 w-[40%] md:w-1/3 bg-red-700 rounded"
-                  // onClick={handleDelete}
+                  onClick={handleDelete}
                 >
                   Delete
                 </button>
@@ -686,227 +825,216 @@ const Leaders = () => {
       </div>
       {/* =========================== End::  updateDriverModel =============================== */}
 
-      <div
-        className="overflow-x-auto bg-gray-900 pb-10 min-h-screen lg:ml-44 px-2 lg:px-10"
-        id="contact-section"
-      >
-        <div className="flex items-left px-4 lg:px-7 pt-14 pb-8">
-          <div className="space-x-8">
-            <button
-              className="font-serif bg-[#2563eb] hover:bg-transparent border border-[#2563eb] hover:text-black hover:bg-white font-medium rounded-lg text-base px-5 py-2.5 mt-8 text-center mr-3 md:mr-0 cursor-pointer"
-              onClick={removeModel}
-            >
-              Driver +
-            </button>
-          </div>
+      <div className="flex items-left px-4 xl:mt-12 lg:px-7 lg:ml-36 py-8">
+        <div className="space-x-8">
+          <button
+            className="font-serif bg-[#2563eb] hover:bg-transparent border border-[#2563eb] hover:text-black hover:bg-white font-medium rounded-lg text-base px-5 py-2.5 mt-8 text-center mr-3 md:mr-0 cursor-pointer"
+            onClick={removeModel}
+          >
+            Driver +
+          </button>
         </div>
-        <div className="md:px-22">
-          <div className="bg-white shadow-lg lg:px-5 py-8 rounded-md w-full lg:w-fit ">
-            <div className="flex items-center justify-between pb-6">
-              <div>
-                <h2 className="font-sans text-xl text-black font-semibold px-1 hover:underline">
-                  Available Drivers
-                </h2>
-              </div>
-            </div>
-            <div>
-              <div className="-mx-12 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
-                <div className="inline-block lg:min-w-full shadow rounded-lg overflow-hidden">
-                  <table className="min-w-full leading-normal">
-                    <thead>
-                      <tr>
-                        <th className="font-lexend px-5 py-3 border-b-2 text-black border-gray-200 bg-gray-300 text-left text-xs font-semibold uppercase tracking-wider">
-                          Image
-                        </th>
-                        <th className="font-lexend p-6 border-b-2 text-black border-gray-200 bg-gray-300 text-left text-xs font-semibold uppercase tracking-wider">
-                          names
-                        </th>
-                        <th className="font-lexend px-5  border-b-2 text-black border-gray-200 bg-gray-300 text-left text-xs font-semibold uppercase tracking-wider">
-                          Email
-                        </th>
-                        <th className="font-lexend px-5 py-3 border-b-2 text-black border-gray-200 bg-gray-300 text-left text-xs font-semibold uppercase tracking-wider">
-                          Telephone
-                        </th>
-                        <th className="font-lexend px-5 py-3 border-b-2 text-black border-gray-200 bg-gray-300 text-left text-xs font-semibold uppercase tracking-wider">
-                          other Telephone
-                        </th>
-                        <th className="font-lexend px-5 py-3 border-b-2 text-black border-gray-200 bg-gray-300 text-left text-xs font-semibold uppercase tracking-wider">
-                          gender
-                        </th>
-                        <th className="font-lexend px-5 py-3 border-b-2 text-black border-gray-200 bg-gray-300 text-left text-xs font-semibold uppercase tracking-wider">
-                          licenseNumber
-                        </th>
-                        <th className="font-lexend px-5 py-3 border-b-2 text-black border-gray-200 bg-gray-300 text-left text-xs font-semibold uppercase tracking-wider">
-                          fontside licenseImage
-                        </th>
-                        <th className="font-lexend px-5 py-3 border-b-2 text-black border-gray-200 bg-gray-300 text-left text-xs font-semibold uppercase tracking-wider">
-                          backside licenseImage
-                        </th>
-                        <th className="font-lexend px-5 py-3 border-b-2 text-black border-gray-200 bg-gray-300 text-left text-xs font-semibold uppercase tracking-wider">
-                          status
-                        </th>
-                        <th className="font-lexend px-5 py-3 border-b-2 text-black border-gray-200 bg-gray-300 text-left text-xs font-semibold uppercase tracking-wider">
-                          acceptingBooking
-                        </th>
-                        <th className="font-lexend px-5 py-3 border-b-2 text-black border-gray-200 bg-gray-300 text-left text-xs font-semibold uppercase tracking-wider">
-                          latitude
-                        </th>
-                        <th className="font-lexend px-5 py-3 border-b-2 text-black border-gray-200 bg-gray-300 text-left text-xs font-semibold uppercase tracking-wider">
-                          longitude
-                        </th>
-                        <th className="font-lexend px-5 py-3 border-b-2 text-black border-gray-200 bg-gray-300 text-left text-xs font-semibold uppercase tracking-wider">
-                          lastLocationUpdatedAt
-                        </th>
-                        <th className="font-lexend px-5 py-3 border-b-2 text-black border-gray-200 bg-gray-300 text-left text-xs font-semibold uppercase tracking-wider">
-                          commission
-                        </th>
-                        <th className="font-lexend p-6 border-b-2 text-black border-gray-200 bg-gray-300 text-left text-xs font-semibold uppercase tracking-wider">
-                          address
-                        </th>
-                        <th className="font-lexend p-6 border-b-2 text-black border-gray-200 bg-gray-300 text-left text-xs font-semibold uppercase tracking-wider">
-                          city
-                        </th>
-                        <th className="font-lexend px-5 py-3 border-b-2 text-black border-gray-200 bg-gray-300 text-left text-xs font-semibold uppercase tracking-wider">
-                          Action
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Data.map((item) => (
-                        <tr key={item._d}>
-                          <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                            <img
-                              className="w-10 h-10 rounded-full shadow-lg object-cover"
-                              src={item.profilePicture}
-                              alt="Bonnie"
-                            />
-                          </td>
-                          <td className="p-3 border-b border-gray-200 text-sm">
-                            <div className="flex items-center">
-                              <div>
-                                <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                                  {item.fullName}
-                                </p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                              email
-                            </p>
-                          </td>
-                          <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                              {item.phoneNumber}
-                            </p>
-                          </td>
-                          <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                              {item.alternatePhoneNumber}
-                            </p>
-                          </td>
-                          <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                              {item.gender}
-                            </p>
-                          </td>
-
-                          <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                              {item.licenseNumber}
-                            </p>
-                          </td>
-                          <td className="px-5 border-b border-gray-200  text-sm">
-                            <img
-                              className="rounded-full h-10 w-10 object-cover"
-                              src={item.licenseImage[0].fontSide}
-                              alt="images"
-                            />
-                          </td>
-                          <td className="px-5 border-b border-gray-200  text-sm">
-                            <img
-                              className="rounded-full h-10 w-10 object-cover"
-                              src={item.licenseImage[0].backSide}
-                              alt="images"
-                            />
-                          </td>
-                          <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                              {item.status}
-                            </p>
-                          </td>
-                          <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                              true
-                            </p>
-                          </td>
-                          <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                              latitude
-                            </p>
-                          </td>
-                          <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                              longitude
-                            </p>
-                          </td>
-                          <td className="px-5 py-3 border-b border-gray-200  text-sm">
-                            <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                              lastLocationUpdatedAt
-                            </p>
-                          </td>
-                          <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                            <div className="flex items-center">
-                              <div>
-                                <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                                  300
-                                </p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                            <div className="flex items-center">
-                              <div>
-                                <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                                  {item.address}
-                                </p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                            <div className="flex items-center">
-                              <div>
-                                <p className="text-gray-900 whitespace-no-wrap font-bold font-sans">
-                                  {item.cityName}
-                                </p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-5 py-3 border-b border-gray-200 text-gray-500 cursor-pointer text-lg">
-                            <div className="flex">
-                              <div
-                                className="cursor-pointer mr-2 text-gray-500"
-                                onClick={() => updateMemberModel()}
-                              >
-                                <FaEdit />
-                              </div>
-                              <div
-                                className="cursor-pointer text-[#FF3D3D]"
-                                onClick={() => removeDeleteModel()}
-                              >
-                                <FaTrash />
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      </div>
+      <div class="overflow-x-auto relative lg:ml-40">
+        <table class="w-full text-sm text-left text-gray-500  dark:text-gray-400">
+          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+              <th scope="col" class="py-3 px-6">
+                Image
+              </th>
+              <th scope="col" class="py-3 px-6">
+                names
+              </th>
+              <th scope="col" class="py-3 px-6">
+                Email
+              </th>
+              <th scope="col" class="py-3 px-6">
+                Telephone
+              </th>
+              <th scope="col" class="py-3 px-6">
+                other Telephone
+              </th>
+              <th scope="col" class="py-3 px-6">
+                gender
+              </th>
+              <th scope="col" class="py-3 px-6">
+                licenseNumber
+              </th>
+              <th scope="col" class="py-3 px-6">
+                status
+              </th>
+              <th scope="col" class="py-3 px-6">
+                acceptingBooking
+              </th>
+              <th scope="col" class="py-3 px-6">
+                latitude
+              </th>
+              <th scope="col" class="py-3 px-6">
+                longitude
+              </th>
+              <th scope="col" class="py-3 px-6">
+                lastLocationUpdatedAt
+              </th>
+              <th scope="col" class="py-3 px-6">
+                commission
+              </th>
+              <th scope="col" class="py-3 px-6">
+                address
+              </th>
+              <th scope="col" class="py-3 px-6">
+                city
+              </th>
+              <th scope="col" class="py-3 px-6">
+                fontside licenseImage
+              </th>
+              <th scope="col" class="py-3 px-6">
+                backside licenseImage
+              </th>
+              <th scope="col" class="py-3 px-6">
+                Action
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {Data.map((item) => (
+              <tr
+                key={item._id}
+                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+              >
+                <td
+                  scope="row"
+                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  <img
+                    className="w-10 h-10 rounded-full shadow-lg object-cover"
+                    src={item.avatar}
+                    alt="Bonnie"
+                  />
+                </td>
+                <td
+                  scope="row"
+                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  {item.fullName}
+                </td>
+                <td
+                  scope="row"
+                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  {item.email}
+                </td>
+                <td
+                  scope="row"
+                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  {item.phoneNumber}
+                </td>
+                <td
+                  scope="row"
+                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  {item.alternatePhoneNumber}
+                </td>
+                <td
+                  scope="row"
+                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  {item.gender}
+                </td>
+                <td
+                  scope="row"
+                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  {item.licenseNumber}
+                </td>
+                <td
+                  scope="row"
+                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  {item.status}
+                </td>
+                <td
+                  scope="row"
+                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  true
+                </td>
+                <td
+                  scope="row"
+                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  latitude
+                </td>
+                <td
+                  scope="row"
+                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  longitude
+                </td>
+                <td
+                  scope="row"
+                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  lastLocationUpdatedAt
+                </td>
+                <td
+                  scope="row"
+                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  300
+                </td>
+                <td
+                  scope="row"
+                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  {item.address}
+                </td>
+                <td
+                  scope="row"
+                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  {item.cityName}
+                </td>
+                <td
+                  scope="row"
+                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  <img
+                    className="rounded-full h-10 w-10 object-cover"
+                    src={item.licenseImage[0].fontSide}
+                    alt="images"
+                  />
+                </td>
+                <td
+                  scope="row"
+                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  <img
+                    className="rounded-full h-10 w-10 object-cover"
+                    src={item.licenseImage[0].backSide}
+                    alt="images"
+                  />
+                </td>
+                <td className="px-5 py-3 text-gray-500 cursor-pointer text-lg">
+                  <div className="flex">
+                    <div
+                      className="cursor-pointer mr-2 text-gray-500"
+                      onClick={() => updateMemberModel()}
+                    >
+                      <FaEdit />
+                    </div>
+                    <div
+                      className="cursor-pointer text-[#FF3D3D]"
+                      onClick={() => removeDeleteModel(SetRowData(item), setId(item._id), setDelete(true))}
+                    >
+                      <FaTrash />
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   );
