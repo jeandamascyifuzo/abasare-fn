@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FaTrash, FaEdit } from "react-icons/fa";
 import { useDropzone } from "react-dropzone";
 import { ToastContainer } from "react-toastify";
+import { useForm } from "react-hook-form";
 import axiosRequest from "../api/index";
 import { Icon } from "@iconify/react";
 import Notify from "../functions/Notify";
@@ -13,15 +14,10 @@ const Leaders = (props) => {
   const [deleteTeamModel, setDeleteTeamModel] = useState(false);
   const [updateTeamModel, setUpdateTeamModel] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [RowData, SetRowData] = useState([])
-  const [Delete, setDelete] = useState(false)
+  const [RowData, SetRowData] = useState([]);
+  const [Delete, setDelete] = useState(false);
   const [id, setId] = useState("");
   const [Data, setData] = useState([]);
-  const [uploadStatus, setUploadStatus] = useState({
-    isProfile: false,
-    isBackSide: false,
-    isFrontSide: false,
-  });
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -95,7 +91,7 @@ const Leaders = (props) => {
     },
   });
 
-  const handleSubmite = async (event) => {
+  const onSubmits = async (event) => {
     event.preventDefault();
     const url = "driver";
     console.log("formData", formData);
@@ -124,12 +120,11 @@ const Leaders = (props) => {
       });
       setLoading(false);
       const { status, message } = res;
-      if (status !== 'SUCCESS') {
+      if (status !== "SUCCESS") {
         GetDrivers();
-        setCreateTeamModel(false)
-      }
-      else {
-        console.log(message)
+        setCreateTeamModel(false);
+      } else {
+        console.log(message);
       }
     });
 
@@ -137,33 +132,77 @@ const Leaders = (props) => {
   };
 
   const handleDelete = (e) => {
-    e.preventDefault()
-    const url = `drivers/profile/${id}`
-    setLoading(true)
-    axiosRequest.delete(url)
-      .then(response => {
-        setLoading(false)
+    e.preventDefault();
+    const url = `drivers/profile/${id}`;
+    setLoading(true);
+    axiosRequest
+      .delete(url)
+      .then((response) => {
+        setLoading(false);
         const result = response.data;
         // Notify(result.message, "success");
         const { status, message } = result;
-        if (status !== 'SUCCESS') {
+        if (status !== "SUCCESS") {
           GetDrivers();
-          setDeleteTeamModel(false)
-        }
-        else {
-          console.log(message)
+          setDeleteTeamModel(false);
+        } else {
+          console.log(message);
         }
       })
-      .catch(error => {
-        setLoading(false)
+      .catch((error) => {
+        setLoading(false);
         if (error.code !== "ERR_NETWORK") {
           // Notify(error.response.data.message, "error");
-        }
-        else {
+        } else {
           // Notify(error.message, "error");
         }
+      });
+  };
+
+  const handleUpdate = (e) => {
+    e.preventDefault();
+    const url = `drivers/profile/${id}`;
+    setLoading(true);
+    axiosRequest
+      .patch(url, formData)
+      .then((response) => {
+        setLoading(false);
+        const result = response.data;
+        Notify(result.message, "success");
+        const { status, message } = result;
+        if (status !== "SUCCESS") {
+          setFormData({
+            fullName: "",
+            email: "",
+            phoneNumber: "",
+            alternatePhoneNumber: "",
+            gender: "",
+            licenseNumber: "",
+            status: "",
+            latitude: "",
+            longitude: "",
+            address: "",
+            cityName: "",
+            acceptingBooking: "",
+            yearExperience: "",
+            rides: "",
+            cost: "",
+            avatar: "",
+            fontSide: "",
+            backSide: "",
+          });
+          GetDrivers();
+          setUpdateTeamModel(false);
+        } else {
+          setFormData("");
+          console.log(message);
+        }
       })
-  }
+      .catch((error) => {
+        setLoading(false);
+        console.log("error", error);
+      });
+  };
 
   const removeModel = () => {
     let newState = !createTeamModel;
@@ -205,6 +244,13 @@ const Leaders = (props) => {
       });
   };
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    // setError,
+  } = useForm();
+
   useEffect(() => {
     GetDrivers();
   }, []);
@@ -229,7 +275,7 @@ const Leaders = (props) => {
           createTeamModel === true ? "block" : "hidden"
         }`}
       >
-        <div className="bg-white w-full sm:w-3/4 md:w-full m-auto xl:w-full rounded-lg md:p-4 py-8">
+        <div className="bg-gray-200 w-full sm:w-3/4 md:w-full m-auto xl:w-full rounded-lg md:p-4 py-8">
           <div className="card-title w-full flex  flex-wrap justify-center items-center  ">
             <h3 className="font-semibold text-sm text-center uppercase text-gray-900">
               Add a Driver
@@ -238,18 +284,22 @@ const Leaders = (props) => {
           </div>
           <div className="card-body">
             <form
-              className=" py-3 px-8 grid grid-cols-1 md:grid-cols-4 xl:grid-cols-3"
-              // onSubmit={handleSubmite}
+              className=" py-3 px-8 grid grid-cols-1 md:grid-cols-4"
+              // onSubmit={(onSubmits)}
+              onSubmit={handleSubmit(onSubmits)}
             >
               <div className="md:pr-2">
                 <label
-                  for="first_name"
-                  class="block mb-2 text-sm font-medium text-gray-900"
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
                 >
                   Full Name
                 </label>
                 <input
                   type="text"
+                  {...register("fullName", {
+                    required: "FullName is required",
+                  })}
                   value={formData.fullName}
                   onChange={(e) =>
                     setFormData({
@@ -257,20 +307,24 @@ const Leaders = (props) => {
                       fullName: e.target.value,
                     })
                   }
-                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  className="border border-gray-300 text-sm rounded w-full p-2.5 focus:outline-none"
                   placeholder="John deo"
                   required
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
-                  for="first_name"
-                  class="block mb-2 text-sm font-medium text-gray-900"
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
                 >
                   Address
                 </label>
                 <input
                   type="text"
+                  {...register("address", {
+                    required: "Address is required",
+                  })}
                   value={formData.address}
                   onChange={(e) =>
                     setFormData({
@@ -278,20 +332,22 @@ const Leaders = (props) => {
                       address: e.target.value,
                     })
                   }
-                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  className="border border-gray-300 text-sm rounded w-full p-2.5 focus:outline-none"
                   placeholder="kigali gasabo"
                   required
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
-                  for="first_name"
-                  class="block mb-2 text-sm font-medium text-gray-900"
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
                 >
                   Email
                 </label>
                 <input
                   type="text"
+                  {...register("email", { required: "Email is required" })}
                   value={formData.email}
                   onChange={(e) =>
                     setFormData({
@@ -299,19 +355,24 @@ const Leaders = (props) => {
                       email: e.target.value,
                     })
                   }
-                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  className="border border-gray-300 text-sm rounded w-full p-2.5 focus:outline-none"
                   placeholder="example@gmail.com"
+                  required
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
-                  for="first_name"
-                  class="block mb-2 text-sm font-medium text-gray-900"
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
                 >
                   City Name
                 </label>
                 <input
                   type="text"
+                  {...register("cityName", {
+                    required: "City  name is required",
+                  })}
                   value={formData.cityName}
                   onChange={(e) =>
                     setFormData({
@@ -319,19 +380,24 @@ const Leaders = (props) => {
                       cityName: e.target.value,
                     })
                   }
-                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  className="border border-gray-300 text-sm rounded w-full p-2.5 focus:outline-none"
                   placeholder="kabeza"
+                  required
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
-                  for="first_name"
-                  class="block mb-2 text-sm font-medium text-gray-900"
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
                 >
                   Telephone Number
                 </label>
                 <input
                   type="Number"
+                  {...register("phoneNumber", {
+                    required: "Phone number is required",
+                  })}
                   value={formData.phoneNumber}
                   onChange={(e) =>
                     setFormData({
@@ -339,19 +405,24 @@ const Leaders = (props) => {
                       phoneNumber: e.target.value,
                     })
                   }
-                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  className="border border-gray-300 text-sm rounded w-full p-2.5 focus:outline-none"
                   placeholder="0788788765"
+                  required
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
-                  for="first_name"
-                  class="block mb-2 text-sm font-medium text-gray-900"
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
                 >
                   Alternate Telephone Number
                 </label>
                 <input
                   type="Number"
+                  {...register("alternatePhoneNumber", {
+                    required: "Alternate Phone Number is required",
+                  })}
                   value={formData.alternatePhoneNumber}
                   onChange={(e) =>
                     setFormData({
@@ -359,19 +430,24 @@ const Leaders = (props) => {
                       alternatePhoneNumber: e.target.value,
                     })
                   }
-                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  className="border border-gray-300 text-sm rounded w-full p-2.5 focus:outline-none"
                   placeholder="0730788765"
+                  required
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
-                  for="first_name"
-                  class="block mb-2 text-sm font-medium text-gray-900"
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
                 >
                   Gender
                 </label>
                 <input
                   type="text"
+                  {...register("gender", {
+                    required: "Gender is required",
+                  })}
                   value={formData.gender}
                   onChange={(e) =>
                     setFormData({
@@ -379,19 +455,24 @@ const Leaders = (props) => {
                       gender: e.target.value,
                     })
                   }
-                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  className="border border-gray-300 text-sm rounded w-full p-2.5 focus:outline-none"
                   placeholder="Male"
+                  required
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
-                  for="first_name"
-                  class="block mb-2 text-sm font-medium text-gray-900"
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
                 >
                   License Number
                 </label>
                 <input
                   type="text"
+                  {...register("licenseNumber", {
+                    required: "License Number is required",
+                  })}
                   value={formData.licenseNumber}
                   onChange={(e) =>
                     setFormData({
@@ -399,19 +480,24 @@ const Leaders = (props) => {
                       licenseNumber: e.target.value,
                     })
                   }
-                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  className="border border-gray-300 text-sm rounded w-full p-2.5 focus:outline-none"
                   placeholder="123ewd3456"
+                  required
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
-                  for="first_name"
-                  class="block mb-2 text-sm font-medium text-gray-900"
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
                 >
                   Status
                 </label>
-                <input
+                {/* <input
                   type="text"
+                  {...register("status", {
+                    required: "Status is required",
+                  })}
                   value={formData.status}
                   onChange={(e) =>
                     setFormData({
@@ -419,19 +505,47 @@ const Leaders = (props) => {
                       status: e.target.value,
                     })
                   }
-                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  className="border border-gray-300 text-sm rounded w-full p-2.5 focus:outline-none"
                   placeholder="Active"
-                />
+                  required
+                /> */}
+                <select
+                  id="user role"
+                  className="bg-gray-50 my-3 border border-gray-300 text-gray-900 text-sm rounded-md block w-full p-2.5"
+                  value={formData.status}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      status: e.target.value,
+                    })
+                  }
+                  required
+                >
+                  <option value="Active">Active</option>
+                  <option value="Not Active">Not Active</option>
+                </select>
               </div>
+
               <div className="md:pr-2">
                 <label
-                  for="first_name"
-                  class="block mb-2 text-sm font-medium text-gray-900"
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
                 >
                   Accepting Booking
                 </label>
-                <input
+                {/* <input
                   type="text"
+                  {...register("acceptingBooking", {
+                    required: "Accepting Booking is required",
+                  })}
+                 
+                  className="border border-gray-300 text-sm rounded w-full p-2.5 focus:outline-none"
+                  placeholder="false"
+                  required
+                /> */}
+                <select
+                  id="user role"
+                  className="bg-gray-50 my-3 border border-gray-300 text-gray-900 text-sm rounded-md block w-full p-2.5"
                   value={formData.acceptingBooking}
                   onChange={(e) =>
                     setFormData({
@@ -439,19 +553,25 @@ const Leaders = (props) => {
                       acceptingBooking: e.target.value,
                     })
                   }
-                  className="border border-gray-300 text-sm rounded w-full p-2.5"
-                  placeholder="false"
-                />
+                  required
+                >
+                  <option value="true">true</option>
+                  <option value="false">false</option>
+                </select>
               </div>
+
               <div className="md:pr-2">
                 <label
-                  for="first_name"
-                  class="block mb-2 text-sm font-medium text-gray-900"
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
                 >
                   last Location Latitude
                 </label>
                 <input
                   type="number"
+                  {...register("latitude", {
+                    required: "Latitude is required",
+                  })}
                   value={formData.latitude}
                   onChange={(e) =>
                     setFormData({
@@ -459,40 +579,24 @@ const Leaders = (props) => {
                       latitude: e.target.value,
                     })
                   }
-                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  className="border border-gray-300 text-sm rounded w-full p-2.5 focus:outline-none"
                   placeholder="0.09876787"
-                />
-              </div>
-              <div className="md:pr-2">
-                <label
-                  for="first_name"
-                  class="block mb-2 text-sm font-medium text-gray-900"
-                >
-                  Last Location Longitude
-                </label>
-                <input
-                  type="number"
-                  value={formData.longitude}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      longitude: e.target.value,
-                    })
-                  }
-                  className="border border-gray-300 text-sm rounded w-full p-2.5"
-                  placeholder="0.09876787"
+                  required
                 />
               </div>
 
               <div className="md:pr-2">
                 <label
-                  for="first_name"
-                  class="block mb-2 text-sm font-medium text-gray-900"
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
                 >
-                  Last Location UpdatedAt
+                  Last Location Longitude
                 </label>
                 <input
-                  type="text"
+                  type="number"
+                  {...register("longitude", {
+                    required: "Longitude is required",
+                  })}
                   value={formData.longitude}
                   onChange={(e) =>
                     setFormData({
@@ -500,19 +604,48 @@ const Leaders = (props) => {
                       longitude: e.target.value,
                     })
                   }
-                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  className="border border-gray-300 text-sm rounded w-full p-2.5 focus:outline-none"
                   placeholder="0.09876787"
+                  required
+                />
+              </div>
+
+              <div className="md:pr-2">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Last Location UpdatedAt
+                </label>
+                <input
+                  type="text"
+                  {...register("longitude", {
+                    required: "Longitude is required",
+                  })}
+                  value={formData.longitude}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      longitude: e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5 focus:outline-none"
+                  placeholder="0.09876787"
+                  required
                 />
               </div>
               <div className="md:pr-2">
                 <label
-                  for="first_name"
-                  class="block mb-2 text-sm font-medium text-gray-900"
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
                 >
                   Commission
                 </label>
                 <input
                   type="number"
+                  {...register("longitude", {
+                    required: "Longitude is required",
+                  })}
                   value={formData.longitude}
                   onChange={(e) =>
                     setFormData({
@@ -522,15 +655,15 @@ const Leaders = (props) => {
                   }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
                   placeholder="90000"
+                  required
                 />
               </div>
 
               <div onClick={() => (temporaryType = "avatar")}>
                 <div>
                   <label
-                    for="first_image"
                     htmlFor="first_image"
-                    class="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-sm font-medium text-gray-900"
                   >
                     Profile Photos
                     {loading ? (
@@ -555,6 +688,7 @@ const Leaders = (props) => {
                     {...getRootProps()}
                     className="hidden"
                     id="first_image"
+                    required
                   />
                 </div>
               </div>
@@ -562,9 +696,8 @@ const Leaders = (props) => {
               <div onClick={() => (temporaryType = "fontSide")}>
                 <div>
                   <label
-                    for="second_image"
                     htmlFor="second_image"
-                    class="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-sm font-medium text-gray-900"
                   >
                     Profile Photos
                     {loading ? (
@@ -589,15 +722,15 @@ const Leaders = (props) => {
                     {...getRootProps()}
                     className="hidden"
                     id="second_image"
+                    required
                   />
                 </div>
               </div>
               <div onClick={() => (temporaryType = "backSide")}>
                 <div>
                   <label
-                    for="last_image"
                     htmlFor="last_image"
-                    class="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-sm font-medium text-gray-900"
                   >
                     Profile Photos
                     {loading ? (
@@ -622,39 +755,39 @@ const Leaders = (props) => {
                     {...getRootProps()}
                     className="hidden"
                     id="last_image"
+                    required
                   />
                 </div>
               </div>
-            </form>
-            <div className="w-full px-8 pt-6 md:pt-0 md:px-44 flex justify-between">
-              <button
-                className="py-2 mr-4 w-[40%] md:w-44 bg-gray-300 rounded border border-gray-800 font-sans text-sm text-gray-900"
-                onClick={(e) => removeModel(e.preventDefault())}
-              >
-                Cancel
-              </button>
-              {/* {loading ? (
-                  <Button variant="dark" disabled className="w-[40%] md:w-1/2">
+              <div className="w-full flex justify-between items-center lg:col-span-2 mt-16">
+                <button
+                  className="py-2 w-[40%] md:w-1/3 bg-transparent rounded border border-gray-800 font-sans text-sm text-gray-900"
+                  onClick={(e) => removeModel(e.preventDefault())}
+                >
+                  Cancel
+                </button>
+                {/* {loading ? (
+                  <Button variant="dark" disabled className='w-[40%] md:w-1/2'>
                     <Spinner
                       as="span"
                       variant="light"
                       size="sm"
                       role="status"
                       aria-hidden="false"
-                      animation="border"
-                    />
+                      animation="border" />
                     Processing...
                   </Button>
                 ) : ( */}
-              <button
-                type="submit"
-                className="py-2 w-[40%] md:w-44 rounded  bg-[#2563eb] border border-gray-800 text-white focus:ring-4 focus:outline-none"
-                onClick={handleSubmite}
-              >
-                Save
-              </button>
-              {/* )} */}
-            </div>
+                <button
+                  className="py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white focus:ring-4 focus:outline-none"
+                  type="submit"
+                  onClick={onSubmits}
+                >
+                  Save
+                </button>
+                {/* )} */}
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -718,87 +851,413 @@ const Leaders = (props) => {
 
       {/* =========================== Start::  updateDriverModel =============================== */}
       <div
-        className={`min-h-full w-screen z-30 bg-gray-500 bg-opacity-30 backdrop-blur-sm fixed flex items-center justify-center px-4 ${
+        className={`h-screen w-full bg-gray-600 bg-opacity-30 backdrop-blur-sm mt-[15%] md:mt-0 absolute md:fixed z-10 flex items-center justify-center md:px-4 ${
           updateTeamModel === true ? "block" : "hidden"
         }`}
       >
-        <div className="bg-white sm:w-3/4 md:w-1/2  xl:w-4/12 rounded-lg p-4 pb-8">
+        <div className="bg-white w-full sm:w-3/4 md:w-full m-auto xl:w-full rounded-lg md:p-4 py-8">
           <div className="card-title w-full flex  flex-wrap justify-center items-center  ">
-            <h3 className="font-bold text-sm text-gray-700 text-center w-11/12">
-              Update <span className="italic text-black">DriverName</span> Info
+            <h3 className="font-semibold text-sm text-center uppercase text-gray-900">
+              update a Driver
             </h3>
-            <hr className=" bg-primary border-b my-3 w-full" />
+            <hr className="bg-primary border-b my-3 w-full" />
           </div>
           <div className="card-body">
-            <form className=" px-8">
-              <div className="input my-3 h-9 ">
-                <div className="grouped-input flex items-center h-full w-full rounded-md">
-                  <input
-                    type="text"
-                    name="name"
-                    className="border rounded outline-none  px-2 font-sans text-xs py-2 w-full"
-                  />
-                </div>
-              </div>
-              <div className="input my-3 h-9 ">
-                <div className="grouped-input flex items-center h-full w-full rounded-md">
-                  <input
-                    type="text"
-                    name="email"
-                    className=" border py-2 rounded cursor-not-allowed outline-none px-2 font-sans text-xs w-full"
-                    disabled
-                    readOnly
-                  />
-                </div>
-              </div>
-              <div className="input my-3 h-9 ">
-                <div className="grouped-input flex items-center h-full w-full rounded-md">
-                  <input
-                    type="number"
-                    name="telephone"
-                    className="border py-2 rounded outline-none px-2 font-sans text-xs w-full"
-                  />
-                </div>
-              </div>
-              <div className="input my-3 h-9 ">
-                <div className="grouped-input flex items-center h-full w-full rounded-md">
-                  <input
-                    type="text"
-                    name="title"
-                    className="border py-2 rounded outline-none  px-2 font-sans text-xs w-full"
-                  />
-                </div>
-              </div>
-              <div className="input my-3 h-9 ">
-                <div className="grouped-input flex items-center h-full w-full rounded-md">
-                  <input
-                    type="text"
-                    name="title"
-                    className="border py-2 rounded outline-none  px-2 font-sans text-xs w-full"
-                  />
-                </div>
-              </div>
-              <div className="input my-3 h-9 ">
-                <div className="grouped-input flex items-center h-full w-full rounded-md">
-                  <input
-                    name="image"
-                    type="file"
-                    className="border py-2 rounded outline-none px-2 font-sans text-xs w-full"
-                    disabled
-                  />
-                </div>
-              </div>
-              <div className="w-full flex justify-between">
-                <button
-                  className="py-2 w-[40%] md:w-1/3 bg-transparent rounded border border-gray-800 font-sans text-sm text-gray-900"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setUpdateTeamModel(false);
-                  }}
+            <form className=" py-3 px-8 grid grid-cols-1 md:grid-cols-4">
+              <div className="md:pr-2">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
                 >
-                  Cancel
-                </button>
-                {/* {loading ? (
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  defaultValue={formData.fullName}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      fullName: e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  placeholder="John deo"
+                  required
+                />
+              </div>
+              <div className="md:pr-2">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Address
+                </label>
+                <input
+                  type="text"
+                  defaultValue={formData.address}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      address: e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  placeholder="kigali gasabo"
+                  required
+                />
+              </div>
+              <div className="md:pr-2">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Email
+                </label>
+                <input
+                  type="text"
+                  defaultValue={formData.email}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      email: e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  placeholder="example@gmail.com"
+                  disabled
+                />
+              </div>
+              <div className="md:pr-2">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  City Name
+                </label>
+                <input
+                  type="text"
+                  defaultValue={formData.cityName}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      cityName: e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  placeholder="kabeza"
+                />
+              </div>
+              <div className="md:pr-2">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Telephone Number
+                </label>
+                <input
+                  type="Number"
+                  defaultValue={formData.phoneNumber}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      phoneNumber: e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  placeholder="0788788765"
+                />
+              </div>
+              <div className="md:pr-2">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Alternate Telephone Number
+                </label>
+                <input
+                  type="Number"
+                  defaultValue={formData.alternatePhoneNumber}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      alternatePhoneNumber: e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  placeholder="0730788765"
+                />
+              </div>
+              <div className="md:pr-2">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Gender
+                </label>
+                <input
+                  type="text"
+                  defaultValue={formData.gender}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      gender: e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  placeholder="Male"
+                />
+              </div>
+              <div className="md:pr-2">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  License Number
+                </label>
+                <input
+                  type="text"
+                  defaultValue={formData.licenseNumber}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      licenseNumber: e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  placeholder="123ewd3456"
+                />
+              </div>
+              <div className="md:pr-2">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Status
+                </label>
+                <input
+                  type="text"
+                  defaultValue={formData.status}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      status: e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  placeholder="Active"
+                />
+              </div>
+              <div className="md:pr-2">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Accepting Booking
+                </label>
+                <input
+                  type="text"
+                  defaultValue={formData.acceptingBooking}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      acceptingBooking: e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  placeholder="false"
+                />
+              </div>
+              <div className="md:pr-2">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  last Location Latitude
+                </label>
+                <input
+                  type="number"
+                  defaultValue={formData.latitude}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      latitude: e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  placeholder="0.09876787"
+                />
+              </div>
+              <div className="md:pr-2">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Last Location Longitude
+                </label>
+                <input
+                  type="number"
+                  defaultValue={formData.longitude}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      longitude: e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  placeholder="0.09876787"
+                />
+              </div>
+
+              <div className="md:pr-2">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Last Location UpdatedAt
+                </label>
+                <input
+                  type="text"
+                  defaultValue={formData.longitude}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      longitude: e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  placeholder="0.09876787"
+                />
+              </div>
+              <div className="md:pr-2">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Commission
+                </label>
+                <input
+                  type="number"
+                  defaultValue={formData.longitude}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      longitude: e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                  placeholder="90000"
+                />
+              </div>
+
+              <div onClick={() => (temporaryType = "avatar")}>
+                <div>
+                  <label
+                    htmlFor="first_image"
+                    className="block mb-2 text-sm font-medium text-gray-900"
+                  >
+                    Profile Photos
+                    {loading ? (
+                      <Icon
+                        icon="eos-icons:bubble-loading"
+                        color="blue"
+                        className="w-6 h-6"
+                      />
+                    ) : (
+                      <img
+                        className="h-16 w-14 object-cover"
+                        htmlFor="first_image"
+                        src={
+                          formData.avatar
+                            ? formData.avatar
+                            : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-vfpa4YGU7dPzQuRdnelFVO2mJ0UTznsB7g&usqp=CAU"
+                        }
+                      />
+                    )}
+                  </label>
+                  <input
+                    {...getRootProps()}
+                    className="hidden"
+                    id="first_image"
+                  />
+                </div>
+              </div>
+
+              <div onClick={() => (temporaryType = "fontSide")}>
+                <div>
+                  <label
+                    htmlFor="second_image"
+                    className="block mb-2 text-sm font-medium text-gray-900"
+                  >
+                    Profile Photos
+                    {loading ? (
+                      <Icon
+                        icon="eos-icons:bubble-loading"
+                        color="blue"
+                        className="w-6 h-6"
+                      />
+                    ) : (
+                      <img
+                        className="h-16 w-14 object-cover"
+                        htmlFor="second_image"
+                        src={
+                          formData.fontSide
+                            ? formData.fontSide
+                            : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-vfpa4YGU7dPzQuRdnelFVO2mJ0UTznsB7g&usqp=CAU"
+                        }
+                      />
+                    )}
+                  </label>
+                  <input
+                    {...getRootProps()}
+                    className="hidden"
+                    id="second_image"
+                  />
+                </div>
+              </div>
+              <div onClick={() => (temporaryType = "backSide")}>
+                <div>
+                  <label
+                    htmlFor="last_image"
+                    className="block mb-2 text-sm font-medium text-gray-900"
+                  >
+                    Profile Photos
+                    {loading ? (
+                      <Icon
+                        icon="eos-icons:bubble-loading"
+                        color="blue"
+                        className="w-6 h-6"
+                      />
+                    ) : (
+                      <img
+                        className="h-16 w-14 object-cover"
+                        htmlFor="last_image"
+                        src={
+                          formData.backSide
+                            ? formData.backSide
+                            : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-vfpa4YGU7dPzQuRdnelFVO2mJ0UTznsB7g&usqp=CAU"
+                        }
+                      />
+                    )}
+                  </label>
+                  <input
+                    {...getRootProps()}
+                    className="hidden"
+                    id="last_image"
+                  />
+                </div>
+              </div>
+            </form>
+            <div className="w-full px-8 pt-6 md:pt-0 md:px-44 flex justify-between">
+              <button
+                className="py-2 mr-4 w-[40%] md:w-44 bg-gray-300 rounded border border-gray-800 font-sans text-sm text-gray-900"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setUpdateTeamModel(false);
+                }}
+              >
+                Cancel
+              </button>
+              {/* {loading ? (
                   <Button variant="dark" disabled className="w-[40%] md:w-1/2">
                     <Spinner
                       as="span"
@@ -811,15 +1270,15 @@ const Leaders = (props) => {
                     Processing...
                   </Button>
                 ) : ( */}
-                <button
-                  className="py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white focus:ring-4 focus:outline-none"
-                  // onClick={handleUpdate}
-                >
-                  Update
-                </button>
-                {/* )} */}
-              </div>
-            </form>
+              <button
+                type="submit"
+                className="py-2 w-[40%] md:w-44 rounded  bg-[#2563eb] border border-gray-800 text-white focus:ring-4 focus:outline-none"
+                onClick={handleUpdate}
+              >
+                Update
+              </button>
+              {/* )} */}
+            </div>
           </div>
         </div>
       </div>
@@ -835,62 +1294,62 @@ const Leaders = (props) => {
           </button>
         </div>
       </div>
-      <div class="overflow-x-auto relative lg:ml-40">
-        <table class="w-full text-sm text-left text-gray-500  dark:text-gray-400">
-          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <div className="overflow-x-auto relative lg:ml-40">
+        <table className="w-full text-sm text-left text-gray-500  dark:text-gray-400">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-              <th scope="col" class="py-3 px-6">
+              <th scope="col" className="py-3 px-6">
                 Image
               </th>
-              <th scope="col" class="py-3 px-6">
+              <th scope="col" className="py-3 px-6">
                 names
               </th>
-              <th scope="col" class="py-3 px-6">
+              <th scope="col" className="py-3 px-6">
                 Email
               </th>
-              <th scope="col" class="py-3 px-6">
+              <th scope="col" className="py-3 px-6">
                 Telephone
               </th>
-              <th scope="col" class="py-3 px-6">
+              <th scope="col" className="py-3 px-6">
                 other Telephone
               </th>
-              <th scope="col" class="py-3 px-6">
+              <th scope="col" className="py-3 px-6">
                 gender
               </th>
-              <th scope="col" class="py-3 px-6">
+              <th scope="col" className="py-3 px-6">
                 licenseNumber
               </th>
-              <th scope="col" class="py-3 px-6">
+              <th scope="col" className="py-3 px-6">
                 status
               </th>
-              <th scope="col" class="py-3 px-6">
+              <th scope="col" className="py-3 px-6">
                 acceptingBooking
               </th>
-              <th scope="col" class="py-3 px-6">
+              <th scope="col" className="py-3 px-6">
                 latitude
               </th>
-              <th scope="col" class="py-3 px-6">
+              <th scope="col" className="py-3 px-6">
                 longitude
               </th>
-              <th scope="col" class="py-3 px-6">
+              <th scope="col" className="py-3 px-6">
                 lastLocationUpdatedAt
               </th>
-              <th scope="col" class="py-3 px-6">
+              <th scope="col" className="py-3 px-6">
                 commission
               </th>
-              <th scope="col" class="py-3 px-6">
+              <th scope="col" className="py-3 px-6">
                 address
               </th>
-              <th scope="col" class="py-3 px-6">
+              <th scope="col" className="py-3 px-6">
                 city
               </th>
-              <th scope="col" class="py-3 px-6">
+              <th scope="col" className="py-3 px-6">
                 fontside licenseImage
               </th>
-              <th scope="col" class="py-3 px-6">
+              <th scope="col" className="py-3 px-6">
                 backside licenseImage
               </th>
-              <th scope="col" class="py-3 px-6">
+              <th scope="col" className="py-3 px-6">
                 Action
               </th>
             </tr>
@@ -899,11 +1358,11 @@ const Leaders = (props) => {
             {Data.map((item) => (
               <tr
                 key={item._id}
-                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
               >
                 <td
                   scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
                   <img
                     className="w-10 h-10 rounded-full shadow-lg object-cover"
@@ -913,91 +1372,91 @@ const Leaders = (props) => {
                 </td>
                 <td
                   scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
                   {item.fullName}
                 </td>
                 <td
                   scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
                   {item.email}
                 </td>
                 <td
                   scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
                   {item.phoneNumber}
                 </td>
                 <td
                   scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
                   {item.alternatePhoneNumber}
                 </td>
                 <td
                   scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
                   {item.gender}
                 </td>
                 <td
                   scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
                   {item.licenseNumber}
                 </td>
                 <td
                   scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
                   {item.status}
                 </td>
                 <td
                   scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
                   true
                 </td>
                 <td
                   scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
                   latitude
                 </td>
                 <td
                   scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
                   longitude
                 </td>
                 <td
                   scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
                   lastLocationUpdatedAt
                 </td>
                 <td
                   scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
                   300
                 </td>
                 <td
                   scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
                   {item.address}
                 </td>
                 <td
                   scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
                   {item.cityName}
                 </td>
                 <td
                   scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
                   <img
                     className="rounded-full h-10 w-10 object-cover"
@@ -1007,7 +1466,7 @@ const Leaders = (props) => {
                 </td>
                 <td
                   scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
                   <img
                     className="rounded-full h-10 w-10 object-cover"
@@ -1019,13 +1478,21 @@ const Leaders = (props) => {
                   <div className="flex">
                     <div
                       className="cursor-pointer mr-2 text-gray-500"
-                      onClick={() => updateMemberModel()}
+                      onClick={() =>
+                        updateMemberModel(setFormData(item), setId(item._id))
+                      }
                     >
                       <FaEdit />
                     </div>
                     <div
                       className="cursor-pointer text-[#FF3D3D]"
-                      onClick={() => removeDeleteModel(SetRowData(item), setId(item._id), setDelete(true))}
+                      onClick={() =>
+                        removeDeleteModel(
+                          SetRowData(item),
+                          setId(item._id),
+                          setDelete(true)
+                        )
+                      }
                     >
                       <FaTrash />
                     </div>
