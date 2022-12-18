@@ -162,8 +162,6 @@ const Leaders = (props) => {
   const handleUpdate = (e) => {
     e.preventDefault();
     const url = `drivers/profile/${driverId}`;
-    
-    console.log("🚀 ~ file: Driver.js:168 ~ handleUpdate ~ url", url)
     setLoading(true);
     axiosRequest
       .put(url, formData)
@@ -229,6 +227,8 @@ const Leaders = (props) => {
       .then((response) => {
         setLoading(false);
         const result = response.data;
+        console.log("🚀 ~ file: Driver.js:230 ~ .then ~ result", result)
+        
         const { status, message, data } = result;
         if (status !== "SUCCESS") {
           setData(data);
@@ -607,14 +607,14 @@ const Leaders = (props) => {
                 </label>
                 <input
                   type="text"
-                  {...register("longitude", {
+                  {...register("lastLocationUpdatedAt", {
                     required: "Longitude is required",
                   })}
-                  value={formData.longitude}
+                  value={formData.lastLocationUpdatedAt}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      longitude: e.target.value,
+                      lastLocationUpdatedAt: e.target.value,
                     })
                   }
                   className="border border-gray-300 text-sm rounded w-full p-2.5 focus:outline-none"
@@ -632,14 +632,14 @@ const Leaders = (props) => {
                 </label>
                 <input
                   type="number"
-                  {...register("longitude", {
+                  {...register("commission", {
                     required: "Longitude is required",
                   })}
-                  value={formData.longitude}
+                  value={formData.commission}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      longitude: e.target.value,
+                      commission: e.target.value,
                     })
                   }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
@@ -1348,6 +1348,13 @@ const Leaders = (props) => {
               </th>
             </tr>
           </thead>
+{/* 
+          commission: String,
+    employeeId: String,
+    lastLocationUpdatedAt: String,
+    yearExperience: String,
+    rides: String,
+    cost: String */}
           <tbody>
             {Data.map((item) => (
               <tr
@@ -1416,25 +1423,25 @@ const Leaders = (props) => {
                   scope="row"
                   className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
-                  latitude
+                  {item.lastLocation[0].latitude}
                 </td>
                 <td
                   scope="row"
                   className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
-                  longitude
+                  {item.lastLocation[0].longitude}
                 </td>
                 <td
                   scope="row"
                   className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
-                  lastLocationUpdatedAt
+                  {item.lastLocationUpdatedAt}
                 </td>
                 <td
                   scope="row"
                   className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
-                  300
+                  {item.commission}
                 </td>
                 <td
                   scope="row"
