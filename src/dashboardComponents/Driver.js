@@ -1108,11 +1108,11 @@ const Leaders = (props) => {
                 </label>
                 <input
                   type="text"
-                  defaultValue={formData.longitude}
+                  defaultValue={formData.lastLocationUpdatedAt}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      longitude: e.target.value,
+                      lastLocationUpdatedAt: e.target.value,
                     })
                   }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
@@ -1128,11 +1128,11 @@ const Leaders = (props) => {
                 </label>
                 <input
                   type="number"
-                  defaultValue={formData.longitude}
+                  defaultValue={formData.commission}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      longitude: e.target.value,
+                      commission: e.target.value,
                     })
                   }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
