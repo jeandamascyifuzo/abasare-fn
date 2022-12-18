@@ -18,7 +18,9 @@ const Leaders = (props) => {
   const [RowData, SetRowData] = useState([]);
   const [Delete, setDelete] = useState(false);
   const [id, setId] = useState("");
+  const [driverId, setDriverId] = useState("");
   const [Data, setData] = useState([]);
+  console.log("driverId <><><><>><<<<<",driverId)
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -93,12 +95,9 @@ const Leaders = (props) => {
   });
 
   const onSubmits = async () => {
-    // event.preventDefault();
     const url = "driver";
-    console.log("formData", formData);
     setLoading(true);
     await axiosRequest.post(url, formData).then((res) => {
-      console.log("<><><><><><>><<>>", res.data);
       setFormData({
         fullName: "",
         email: "",
@@ -162,10 +161,12 @@ const Leaders = (props) => {
 
   const handleUpdate = (e) => {
     e.preventDefault();
-    const url = `drivers/profile/${id}`;
+    const url = `drivers/profile/${driverId}`;
+    
+    console.log("🚀 ~ file: Driver.js:168 ~ handleUpdate ~ url", url)
     setLoading(true);
     axiosRequest
-      .patch(url, formData)
+      .put(url, formData)
       .then((response) => {
         setLoading(false);
         const result = response.data;
@@ -288,7 +289,6 @@ const Leaders = (props) => {
               className=" py-3 px-8 grid grid-cols-1 md:grid-cols-4"
               action="#"
               onSubmit={handleSubmit(onSubmits)}
-              // onSubmit={onSubmits}
             >
               <div className="md:pr-2">
                 <label
@@ -1473,7 +1473,7 @@ const Leaders = (props) => {
                     <div
                       className="cursor-pointer mr-2 text-gray-500"
                       onClick={() =>
-                        updateMemberModel(setFormData(item), setId(item._id))
+                        updateMemberModel(setFormData(item), setDriverId(item.driverId))
                       }
                     >
                       <FaEdit />
