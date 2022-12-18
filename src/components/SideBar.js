@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { HiOutlineShoppingCart, HiCog } from "react-icons/hi"
+import { HiOutlineShoppingCart } from "react-icons/hi"
 
 const SideBar = ({ style }) => {
     return (

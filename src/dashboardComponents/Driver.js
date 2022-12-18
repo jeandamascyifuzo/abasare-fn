@@ -3,8 +3,9 @@ import { FaTrash, FaEdit } from "react-icons/fa";
 import { useDropzone } from "react-dropzone";
 import { ToastContainer } from "react-toastify";
 import { useForm } from "react-hook-form";
-import axiosRequest from "../api/index";
 import { Icon } from "@iconify/react";
+import { Button, Spinner } from "react-bootstrap";
+import axiosRequest from "../api/index";
 import Notify from "../functions/Notify";
 import axios from "axios";
 
@@ -91,8 +92,8 @@ const Leaders = (props) => {
     },
   });
 
-  const onSubmits = async (event) => {
-    event.preventDefault();
+  const onSubmits = async () => {
+    // event.preventDefault();
     const url = "driver";
     console.log("formData", formData);
     setLoading(true);
@@ -285,8 +286,9 @@ const Leaders = (props) => {
           <div className="card-body">
             <form
               className=" py-3 px-8 grid grid-cols-1 md:grid-cols-4"
-              // onSubmit={(onSubmits)}
+              action="#"
               onSubmit={handleSubmit(onSubmits)}
+              // onSubmit={onSubmits}
             >
               <div className="md:pr-2">
                 <label
@@ -346,7 +348,7 @@ const Leaders = (props) => {
                   Email
                 </label>
                 <input
-                  type="text"
+                  type="email"
                   {...register("email", { required: "Email is required" })}
                   value={formData.email}
                   onChange={(e) =>
@@ -443,11 +445,12 @@ const Leaders = (props) => {
                 >
                   Gender
                 </label>
-                <input
-                  type="text"
+                <select
+                  id="gender"
                   {...register("gender", {
                     required: "Gender is required",
                   })}
+                  className="bg-gray-50 my-3 border border-gray-300 text-gray-900 text-sm rounded-md block w-full p-2.5"
                   value={formData.gender}
                   onChange={(e) =>
                     setFormData({
@@ -455,10 +458,13 @@ const Leaders = (props) => {
                       gender: e.target.value,
                     })
                   }
-                  className="border border-gray-300 text-sm rounded w-full p-2.5 focus:outline-none"
-                  placeholder="Male"
                   required
-                />
+                >
+                  <option defaultValue>--select--</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Say nothing">Say nothing</option>
+                </select>
               </div>
 
               <div className="md:pr-2">
@@ -493,24 +499,11 @@ const Leaders = (props) => {
                 >
                   Status
                 </label>
-                {/* <input
-                  type="text"
+                <select
+                  id="status"
                   {...register("status", {
                     required: "Status is required",
                   })}
-                  value={formData.status}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      status: e.target.value,
-                    })
-                  }
-                  className="border border-gray-300 text-sm rounded w-full p-2.5 focus:outline-none"
-                  placeholder="Active"
-                  required
-                /> */}
-                <select
-                  id="user role"
                   className="bg-gray-50 my-3 border border-gray-300 text-gray-900 text-sm rounded-md block w-full p-2.5"
                   value={formData.status}
                   onChange={(e) =>
@@ -521,6 +514,7 @@ const Leaders = (props) => {
                   }
                   required
                 >
+                  <option defaultValue>--select--</option>
                   <option value="Active">Active</option>
                   <option value="Not Active">Not Active</option>
                 </select>
@@ -533,18 +527,11 @@ const Leaders = (props) => {
                 >
                   Accepting Booking
                 </label>
-                {/* <input
-                  type="text"
+                <select
+                  id="booking?"
                   {...register("acceptingBooking", {
                     required: "Accepting Booking is required",
                   })}
-                 
-                  className="border border-gray-300 text-sm rounded w-full p-2.5 focus:outline-none"
-                  placeholder="false"
-                  required
-                /> */}
-                <select
-                  id="user role"
                   className="bg-gray-50 my-3 border border-gray-300 text-gray-900 text-sm rounded-md block w-full p-2.5"
                   value={formData.acceptingBooking}
                   onChange={(e) =>
@@ -555,6 +542,7 @@ const Leaders = (props) => {
                   }
                   required
                 >
+                  <option defaultValue>--select--</option>
                   <option value="true">true</option>
                   <option value="false">false</option>
                 </select>
@@ -634,6 +622,7 @@ const Leaders = (props) => {
                   required
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
                   htmlFor="first_name"
@@ -681,6 +670,7 @@ const Leaders = (props) => {
                             ? formData.avatar
                             : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-vfpa4YGU7dPzQuRdnelFVO2mJ0UTznsB7g&usqp=CAU"
                         }
+                        alt=""
                       />
                     )}
                   </label>
@@ -688,7 +678,6 @@ const Leaders = (props) => {
                     {...getRootProps()}
                     className="hidden"
                     id="first_image"
-                    required
                   />
                 </div>
               </div>
@@ -715,6 +704,7 @@ const Leaders = (props) => {
                             ? formData.fontSide
                             : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-vfpa4YGU7dPzQuRdnelFVO2mJ0UTznsB7g&usqp=CAU"
                         }
+                        alt=""
                       />
                     )}
                   </label>
@@ -722,10 +712,10 @@ const Leaders = (props) => {
                     {...getRootProps()}
                     className="hidden"
                     id="second_image"
-                    required
                   />
                 </div>
               </div>
+
               <div onClick={() => (temporaryType = "backSide")}>
                 <div>
                   <label
@@ -748,6 +738,7 @@ const Leaders = (props) => {
                             ? formData.backSide
                             : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-vfpa4YGU7dPzQuRdnelFVO2mJ0UTznsB7g&usqp=CAU"
                         }
+                        alt=""
                       />
                     )}
                   </label>
@@ -755,37 +746,37 @@ const Leaders = (props) => {
                     {...getRootProps()}
                     className="hidden"
                     id="last_image"
-                    required
                   />
                 </div>
               </div>
-              <div className="w-full flex justify-between items-center lg:col-span-2 mt-16">
+
+              <div className="w-full flex justify-between items-center md:col-span-2 mt-16">
                 <button
                   className="py-2 w-[40%] md:w-1/3 bg-transparent rounded border border-gray-800 font-sans text-sm text-gray-900"
                   onClick={(e) => removeModel(e.preventDefault())}
                 >
                   Cancel
                 </button>
-                {/* {loading ? (
-                  <Button variant="dark" disabled className='w-[40%] md:w-1/2'>
+                {loading ? (
+                  <Button variant="dark" disabled className="w-[40%] md:w-1/2">
                     <Spinner
                       as="span"
                       variant="light"
                       size="sm"
                       role="status"
                       aria-hidden="false"
-                      animation="border" />
+                      animation="border"
+                    />
                     Processing...
                   </Button>
-                ) : ( */}
-                <button
-                  className="py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white focus:ring-4 focus:outline-none"
-                  type="submit"
-                  onClick={onSubmits}
-                >
-                  Save
-                </button>
-                {/* )} */}
+                ) : (
+                  <button
+                    type="submit"
+                    className="py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white focus:ring-4 focus:outline-none"
+                  >
+                    Save
+                  </button>
+                )}
               </div>
             </form>
           </div>
@@ -822,7 +813,7 @@ const Leaders = (props) => {
                 >
                   Cancel
                 </button>
-                {/* {loading ? (
+                {loading ? (
                   <Button variant="dark" disabled className="w-[40%] md:w-1/2">
                     <Spinner
                       as="span"
@@ -834,14 +825,14 @@ const Leaders = (props) => {
                     />
                     Processing...
                   </Button>
-                ) : ( */}
-                <button
-                  className="text-white py-2 w-[40%] md:w-1/3 bg-red-700 rounded"
-                  onClick={handleDelete}
-                >
-                  Delete
-                </button>
-                {/* )} */}
+                ) : (
+                  <button
+                    className="text-white py-2 w-[40%] md:w-1/3 bg-red-700 rounded"
+                    onClick={handleDelete}
+                  >
+                    Delete
+                  </button>
+                )}
               </div>
             </form>
           </div>
@@ -1171,6 +1162,7 @@ const Leaders = (props) => {
                             ? formData.avatar
                             : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-vfpa4YGU7dPzQuRdnelFVO2mJ0UTznsB7g&usqp=CAU"
                         }
+                        alt=""
                       />
                     )}
                   </label>
@@ -1204,6 +1196,7 @@ const Leaders = (props) => {
                             ? formData.fontSide
                             : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-vfpa4YGU7dPzQuRdnelFVO2mJ0UTznsB7g&usqp=CAU"
                         }
+                        alt=""
                       />
                     )}
                   </label>
@@ -1236,6 +1229,7 @@ const Leaders = (props) => {
                             ? formData.backSide
                             : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-vfpa4YGU7dPzQuRdnelFVO2mJ0UTznsB7g&usqp=CAU"
                         }
+                        alt=""
                       />
                     )}
                   </label>
@@ -1257,27 +1251,27 @@ const Leaders = (props) => {
               >
                 Cancel
               </button>
-              {/* {loading ? (
-                  <Button variant="dark" disabled className="w-[40%] md:w-1/2">
-                    <Spinner
-                      as="span"
-                      variant="light"
-                      size="sm"
-                      role="status"
-                      aria-hidden="false"
-                      animation="border"
-                    />
-                    Processing...
-                  </Button>
-                ) : ( */}
-              <button
-                type="submit"
-                className="py-2 w-[40%] md:w-44 rounded  bg-[#2563eb] border border-gray-800 text-white focus:ring-4 focus:outline-none"
-                onClick={handleUpdate}
-              >
-                Update
-              </button>
-              {/* )} */}
+              {loading ? (
+                <Button variant="dark" disabled className="w-[40%] md:w-1/2">
+                  <Spinner
+                    as="span"
+                    variant="light"
+                    size="sm"
+                    role="status"
+                    aria-hidden="false"
+                    animation="border"
+                  />
+                  Processing...
+                </Button>
+              ) : (
+                <button
+                  type="submit"
+                  className="py-2 w-[40%] md:w-44 rounded  bg-[#2563eb] border border-gray-800 text-white focus:ring-4 focus:outline-none"
+                  onClick={handleUpdate}
+                >
+                  Update
+                </button>
+              )}
             </div>
           </div>
         </div>

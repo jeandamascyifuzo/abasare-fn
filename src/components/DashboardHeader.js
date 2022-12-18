@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import Sidebar from './SideBar';
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { HiMenu, HiOutlineX } from "react-icons/hi"
 // import { logout, selectUser } from "../redux/reducers/login";
-import { useDispatch, useSelector } from 'react-redux';
+// import { useDispatch, useSelector } from 'react-redux';
 
 const DashboardHeader = () => {
 

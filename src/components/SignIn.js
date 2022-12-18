@@ -51,7 +51,7 @@ const SignIn = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   className="bg-gray-700 border border-gray-300 text-black sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                   placeholder="name@company.com"
-                  required=""
+                  required
                 />
               </div>
               <div>
@@ -68,7 +68,7 @@ const SignIn = () => {
                   id="password"
                   placeholder="••••••••"
                   className="bg-gray-700 border border-gray-300 text-black sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                  required=""
+                  required
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
