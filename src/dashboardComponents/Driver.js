@@ -20,7 +20,6 @@ const Leaders = (props) => {
   const [id, setId] = useState("");
   const [driverId, setDriverId] = useState("");
   const [Data, setData] = useState([]);
-  console.log("driverId <><><><>><<<<<",driverId)
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -119,6 +118,7 @@ const Leaders = (props) => {
         backSide: "",
       });
       setLoading(false);
+      // Notify(res.message, "success");
       const { status, message } = res;
       if (status !== "SUCCESS") {
         GetDrivers();
@@ -227,8 +227,8 @@ const Leaders = (props) => {
       .then((response) => {
         setLoading(false);
         const result = response.data;
-        console.log("🚀 ~ file: Driver.js:230 ~ .then ~ result", result)
-        
+        console.log("🚀 ~ file: Driver.js:230 ~ .then ~ result", result);
+
         const { status, message, data } = result;
         if (status !== "SUCCESS") {
           setData(data);
@@ -335,7 +335,7 @@ const Leaders = (props) => {
                     })
                   }
                   className="border border-gray-300 text-sm rounded w-full p-2.5 focus:outline-none"
-                  placeholder="kigali gasabo"
+                  placeholder="Kanomber"
                   required
                 />
               </div>
@@ -643,7 +643,82 @@ const Leaders = (props) => {
                     })
                   }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
-                  placeholder="90000"
+                  placeholder="10000"
+                  required
+                />
+              </div>
+
+              <div className="md:pr-2">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Experience
+                </label>
+                <input
+                  type="text"
+                  {...register("yearExperience", {
+                    required: "yearExperience is required",
+                  })}
+                  value={formData.yearExperience}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      yearExperience: e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5 focus:outline-none"
+                  placeholder="3 Years"
+                  required
+                />
+              </div>
+
+              <div className="md:pr-2">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  rides
+                </label>
+                <input
+                  type="text"
+                  {...register("rides", {
+                    required: "rides is required",
+                  })}
+                  value={formData.rides}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      rides: e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5 focus:outline-none"
+                  placeholder="15 Rides"
+                  required
+                />
+              </div>
+
+              <div className="md:pr-2">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Cost
+                </label>
+                <input
+                  type="text"
+                  {...register("cost", {
+                    required: "cost is required",
+                  })}
+                  value={formData.cost}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      cost: e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5 focus:outline-none"
+                  placeholder="15000"
                   required
                 />
               </div>
@@ -750,9 +825,9 @@ const Leaders = (props) => {
                 </div>
               </div>
 
-              <div className="w-full flex justify-between items-center md:col-span-2 mt-16">
+              <div className="w-full flex justify-around items-center md:col-span-4 mt-16">
                 <button
-                  className="py-2 w-[40%] md:w-1/3 bg-transparent rounded border border-gray-800 font-sans text-sm text-gray-900"
+                  className="py-2 w-[40%] md:w-52 bg-transparent rounded border border-gray-800 font-sans text-sm text-gray-900"
                   onClick={(e) => removeModel(e.preventDefault())}
                 >
                   Cancel
@@ -772,7 +847,7 @@ const Leaders = (props) => {
                 ) : (
                   <button
                     type="submit"
-                    className="py-2 w-[40%] md:w-1/3 rounded  bg-gray-300 hover:bg-transparent border border-gray-800 hover:text-black hover:bg-white focus:ring-4 focus:outline-none"
+                    className="py-2 w-[40%] md:w-52 rounded text-white bg-blue-500 border border-white hover:text-black focus:ring-4 focus:outline-none"
                   >
                     Save
                   </button>
@@ -808,7 +883,7 @@ const Leaders = (props) => {
               </div>
               <div className="w-full flex justify-between">
                 <button
-                  className="py-2 w-[40%] md:w-1/3 bg-transparent rounded border border-gray-800 font-sans text-sm"
+                  className="py-2 w-[40%] md:w-1/3 bg-transparent rounded border border-white font-sans text-sm"
                   onClick={(e) => removeDeleteModel(e.preventDefault())}
                 >
                   Cancel
@@ -872,10 +947,9 @@ const Leaders = (props) => {
                     })
                   }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
-                  placeholder="John deo"
-                  required
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
                   htmlFor="first_name"
@@ -893,10 +967,9 @@ const Leaders = (props) => {
                     })
                   }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
-                  placeholder="kigali gasabo"
-                  required
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
                   htmlFor="first_name"
@@ -914,10 +987,10 @@ const Leaders = (props) => {
                     })
                   }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
-                  placeholder="example@gmail.com"
                   disabled
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
                   htmlFor="first_name"
@@ -935,9 +1008,9 @@ const Leaders = (props) => {
                     })
                   }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
-                  placeholder="kabeza"
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
                   htmlFor="first_name"
@@ -955,9 +1028,9 @@ const Leaders = (props) => {
                     })
                   }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
-                  placeholder="0788788765"
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
                   htmlFor="first_name"
@@ -975,9 +1048,9 @@ const Leaders = (props) => {
                     })
                   }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
-                  placeholder="0730788765"
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
                   htmlFor="first_name"
@@ -995,9 +1068,9 @@ const Leaders = (props) => {
                     })
                   }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
-                  placeholder="Male"
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
                   htmlFor="first_name"
@@ -1015,9 +1088,9 @@ const Leaders = (props) => {
                     })
                   }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
-                  placeholder="123ewd3456"
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
                   htmlFor="first_name"
@@ -1035,9 +1108,9 @@ const Leaders = (props) => {
                     })
                   }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
-                  placeholder="Active"
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
                   htmlFor="first_name"
@@ -1055,9 +1128,9 @@ const Leaders = (props) => {
                     })
                   }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
-                  placeholder="false"
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
                   htmlFor="first_name"
@@ -1075,9 +1148,9 @@ const Leaders = (props) => {
                     })
                   }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
-                  placeholder="0.09876787"
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
                   htmlFor="first_name"
@@ -1095,7 +1168,6 @@ const Leaders = (props) => {
                     })
                   }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
-                  placeholder="0.09876787"
                 />
               </div>
 
@@ -1116,9 +1188,9 @@ const Leaders = (props) => {
                     })
                   }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
-                  placeholder="0.09876787"
                 />
               </div>
+
               <div className="md:pr-2">
                 <label
                   htmlFor="first_name"
@@ -1136,7 +1208,66 @@ const Leaders = (props) => {
                     })
                   }
                   className="border border-gray-300 text-sm rounded w-full p-2.5"
-                  placeholder="90000"
+                />
+              </div>
+
+              <div className="md:pr-2">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Experience
+                </label>
+                <input
+                  type="number"
+                  defaultValue={formData.yearExperience}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      yearExperience: e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                />
+              </div>
+
+              <div className="md:pr-2">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Rides
+                </label>
+                <input
+                  type="number"
+                  defaultValue={formData.rides}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      rides: e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5"
+                />
+              </div>
+
+              <div className="md:pr-2">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Cost
+                </label>
+                <input
+                  type="number"
+                  defaultValue={formData.cost}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      cost: e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 text-sm rounded w-full p-2.5"
                 />
               </div>
 
@@ -1207,6 +1338,7 @@ const Leaders = (props) => {
                   />
                 </div>
               </div>
+
               <div onClick={() => (temporaryType = "backSide")}>
                 <div>
                   <label
@@ -1243,7 +1375,7 @@ const Leaders = (props) => {
             </form>
             <div className="w-full px-8 pt-6 md:pt-0 md:px-44 flex justify-between">
               <button
-                className="py-2 mr-4 w-[40%] md:w-44 bg-gray-300 rounded border border-gray-800 font-sans text-sm text-gray-900"
+                className="py-2 mr-4 w-[40%] md:w-44 bg-gray-300 rounded border border-white font-sans text-sm text-gray-900"
                 onClick={(e) => {
                   e.preventDefault();
                   setUpdateTeamModel(false);
@@ -1266,7 +1398,7 @@ const Leaders = (props) => {
               ) : (
                 <button
                   type="submit"
-                  className="py-2 w-[40%] md:w-44 rounded  bg-[#2563eb] border border-gray-800 text-white focus:ring-4 focus:outline-none"
+                  className="py-2 w-[40%] md:w-44 rounded  bg-[#2563eb] border border-white text-white focus:ring-4 focus:outline-none"
                   onClick={handleUpdate}
                 >
                   Update
@@ -1338,6 +1470,15 @@ const Leaders = (props) => {
                 city
               </th>
               <th scope="col" className="py-3 px-6">
+                Experience
+              </th>
+              <th scope="col" className="py-3 px-6">
+                Rides
+              </th>
+              <th scope="col" className="py-3 px-6">
+                Cost
+              </th>
+              <th scope="col" className="py-3 px-6">
                 fontside licenseImage
               </th>
               <th scope="col" className="py-3 px-6">
@@ -1348,13 +1489,6 @@ const Leaders = (props) => {
               </th>
             </tr>
           </thead>
-{/* 
-          commission: String,
-    employeeId: String,
-    lastLocationUpdatedAt: String,
-    yearExperience: String,
-    rides: String,
-    cost: String */}
           <tbody>
             {Data.map((item) => (
               <tr
@@ -1459,6 +1593,24 @@ const Leaders = (props) => {
                   scope="row"
                   className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
+                  {item.yearExperience}
+                </td>
+                <td
+                  scope="row"
+                  className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  {item.rides}
+                </td>
+                <td
+                  scope="row"
+                  className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  {item.cost}
+                </td>
+                <td
+                  scope="row"
+                  className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
                   <img
                     className="rounded-full h-10 w-10 object-cover"
                     src={item.licenseImage[0].fontSide}
@@ -1480,7 +1632,10 @@ const Leaders = (props) => {
                     <div
                       className="cursor-pointer mr-2 text-gray-500"
                       onClick={() =>
-                        updateMemberModel(setFormData(item), setDriverId(item.driverId))
+                        updateMemberModel(
+                          setFormData(item),
+                          setDriverId(item.driverId)
+                        )
                       }
                     >
                       <FaEdit />
